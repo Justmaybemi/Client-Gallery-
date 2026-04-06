@@ -2,8 +2,109 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=client-a-k47m2x.html">
-  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JustMaybeMi</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Manrope', sans-serif;
+      background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
+      background-size: 400% 400%;
+      animation: gradientShift 8s ease infinite;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      width: 90%;
+      max-width: 420px;
+    }
+
+    .logo {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      border: 2px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.15);
+      padding: 4px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin: 0 0 10px;
+    }
+
+    p {
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 30px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 999px;
+      border: none;
+      background: white;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: #ffe6f2;
+    }
+  </style>
 </head>
-<body></body>
+
+<body>
+
+  <div class="container">
+    <img src="logo.png" class="logo" alt="logo">
+
+    <h1>JustMaybeMi</h1>
+
+    <p>Enter your gallery link</p>
+
+    <input id="linkInput" placeholder="Paste your gallery link here...">
+
+    <button onclick="goToGallery()">Open Gallery</button>
+  </div>
+
+  <script>
+    function goToGallery() {
+      const link = document.getElementById("linkInput").value.trim();
+      if (!link) return;
+      window.location.href = link;
+    }
+  </script>
+
+</body>
 </html>
