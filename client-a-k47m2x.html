@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JustMaybeMi</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maya Birthday Session | JustMaybeMi</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      min-height: 100vh;
       font-family: 'Manrope', sans-serif;
       background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
       background-size: 400% 400%;
-      animation: gradientShift 8s ease infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      animation: gradientShift 10s ease infinite;
       color: white;
-      text-align: center;
-      padding: 24px;
     }
 
     @keyframes gradientShift {
@@ -33,159 +31,659 @@
       100% { background-position: 0% 50%; }
     }
 
-    .container {
-      width: 100%;
-      max-width: 460px;
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hero {
+      min-height: 100vh;
+      padding: 28px 22px 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-inner {
+      width: min(94%, 1250px);
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      padding: 12px 8px;
+    }
+
+    .brand-link {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .logo {
-      width: 68px;
-      height: 68px;
+      width: 70px;
+      height: 70px;
       object-fit: cover;
       border-radius: 50%;
-      margin: 0 auto 14px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      background: rgba(255, 255, 255, 0.12);
+      border: 2px solid rgba(255,255,255,0.74);
       padding: 4px;
-      backdrop-filter: blur(4px);
+      background: rgba(255,255,255,0.14);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .logo:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4.6rem);
+      line-height: 1;
+      margin: 0;
+    }
+
+    .session-label {
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .session-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 1.03;
+      margin: 0 0 16px;
+    }
+
+    .hero-text {
+      max-width: 560px;
+      line-height: 1.75;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 0.96rem;
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.14);
+    }
+
+    .hero-btn.primary {
+      background: white;
+      color: #111;
+    }
+
+    .hero-btn.secondary {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-image-card {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow:
+        0 44px 90px rgba(38, 9, 29, 0.28),
+        0 22px 40px rgba(0,0,0,0.14);
+      min-height: 640px;
+      background: rgba(255,255,255,0.14);
+    }
+
+    .hero-image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
 
-    h1 {
-      margin: 0 0 10px;
+    .hero-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.42), rgba(0,0,0,0.06));
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      padding: 24px;
+    }
+
+    .hero-image-meta {
+      color: white;
+    }
+
+    .hero-image-meta p {
+      margin: 0 0 6px;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .hero-image-meta h2 {
+      margin: 0;
       font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 7vw, 4.6rem);
-      line-height: 1;
+      font-size: clamp(1.5rem, 3vw, 2.6rem);
+      line-height: 1.06;
     }
 
-    p {
-      margin: 0 0 26px;
-      color: rgba(255, 255, 255, 0.88);
-      line-height: 1.6;
-      font-size: 1rem;
+    .gallery-section {
+      width: min(92%, 1180px);
+      margin: 0 auto 70px;
     }
 
-    .input-wrap {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      border-radius: 18px;
-      padding: 10px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
-    }
-
-    input {
-      width: 100%;
-      border: none;
-      outline: none;
-      background: white;
+    .gallery-shell {
+      background: rgba(255,255,255,0.98);
       color: #111;
-      border-radius: 12px;
-      padding: 15px 16px;
-      font-size: 1rem;
-      margin-bottom: 10px;
+      border-radius: 28px;
+      padding: 26px 22px 30px;
+      box-shadow:
+        0 40px 90px rgba(37, 9, 28, 0.22),
+        0 18px 40px rgba(0,0,0,0.14),
+        0 0 0 1px rgba(255,255,255,0.25) inset;
+      backdrop-filter: blur(6px);
     }
 
-    button {
-      width: 100%;
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .gallery-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.7rem, 3vw, 2.5rem);
+      margin: 0 0 8px;
+    }
+
+    .gallery-header p {
+      margin: 0;
+      color: #666;
+      line-height: 1.65;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .btn {
       border: none;
       border-radius: 999px;
-      padding: 14px 18px;
-      background: white;
-      color: #111;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.25s ease, background 0.25s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      background: #ffefe2;
-    }
-
-    .error {
-      display: none;
-      margin-top: 12px;
+      padding: 12px 18px;
+      font-weight: 600;
       font-size: 0.95rem;
-      color: #fff3f3;
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
     }
 
-    .hint {
-      margin-top: 14px;
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.10);
+    }
+
+    .btn-primary {
+      background: #111;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #f2f0ed;
+      color: #111;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .photo-card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    }
+
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.02);
+    }
+
+    .photo-card.selected {
+      outline: 4px solid #7B024D;
+      box-shadow: 0 10px 26px rgba(123,2,77,0.18);
+    }
+
+    .selection-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.94);
+      color: #111;
+      display: none;
+      align-items: center;
+      justify-content: center;
       font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.78);
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+    }
+
+    .selecting .selection-badge {
+      display: flex;
+    }
+
+    .photo-card.selected .selection-badge {
+      background: #7B024D;
+      color: white;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.94);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 18px;
+      touch-action: pan-y;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-inner {
+      position: relative;
+      width: min(100%, 1120px);
+      text-align: center;
+    }
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 82vh;
+      border-radius: 18px;
+      box-shadow: 0 22px 60px rgba(0,0,0,0.34);
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .lightbox-btn {
+      position: absolute;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: white;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+    }
+
+    .close-btn {
+      top: 14px;
+      right: 14px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+    }
+
+    .arrow-btn {
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52px;
+      height: 52px;
+      font-size: 1.5rem;
+    }
+
+    .prev-btn {
+      left: 14px;
+    }
+
+    .next-btn {
+      right: 14px;
+    }
+
+    .counter {
+      position: absolute;
+      bottom: -38px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.88);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-image-card {
+        min-height: 420px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 580px) {
+      .hero {
+        min-height: auto;
+        padding-top: 26px;
+      }
+
+      .page-wrap,
+      .gallery-section {
+        width: min(94%, 1180px);
+      }
+
+      .gallery-shell {
+        padding: 18px 14px 20px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-image-card {
+        min-height: 300px;
+      }
+
+      .arrow-btn {
+        width: 46px;
+        height: 46px;
+      }
+
+      .close-btn {
+        top: 10px;
+        right: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="container">
-    <img src="logo.png" alt="JustMaybeMi logo" class="logo">
-    <h1>JustMaybeMi</h1>
-    <p>Paste your gallery link or enter your access code to open your client gallery.</p>
 
-    <div class="input-wrap">
-      <input
-        id="accessInput"
-        type="text"
-        placeholder="Paste link or enter access code"
-        autocomplete="off"
-        spellcheck="false"
-      >
-      <button id="openGalleryBtn" type="button">Open Gallery</button>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <a href="index.html" class="brand-link">
+          <img src="logo.png" class="logo" alt="JustMaybeMi logo">
+          <h1 class="brand-name">JustMaybeMi</h1>
+        </a>
+
+        <p class="session-label">Private Client Gallery</p>
+        <h2 class="session-title">Maya Birthday Session</h2>
+        <p class="hero-text">
+          A curated collection from your session, presented in a clean and elevated gallery experience. Scroll down to view the full gallery, download your favorites, or open images in full screen.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#gallery" class="hero-btn primary">View Gallery</a>
+          <button class="hero-btn secondary" id="heroDownloadAll" type="button">Download All</button>
+        </div>
+      </div>
+
+      <div class="hero-image-card">
+        <img id="heroImage" alt="Session cover image">
+        <div class="hero-image-overlay">
+          <div class="hero-image-meta">
+            <p>Featured Image</p>
+            <h2>Maya Birthday Session</h2>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <div id="errorMessage" class="error">Please enter a valid gallery link or access code.</div>
-    <div class="hint">Example codes: CLIENTA, CLIENTB</div>
-  </main>
+  <section class="gallery-section" id="gallery">
+    <div class="gallery-shell">
+      <div class="gallery-header">
+        <h3>Full Gallery</h3>
+        <p>Tap any image to view it larger. Use Select to choose favorites, or download the full set.</p>
+      </div>
 
-  <script>
-    const input = document.getElementById("accessInput");
-    const button = document.getElementById("openGalleryBtn");
-    const errorMessage = document.getElementById("errorMessage");
+      <div class="top-actions">
+        <button class="btn btn-primary" id="downloadAll">Download All</button>
+        <button class="btn btn-secondary" id="selectBtn">Select</button>
+        <button class="btn btn-primary hidden" id="downloadSelected">Download Selected</button>
+        <button class="btn btn-secondary hidden" id="cancelBtn">Cancel</button>
+      </div>
 
-    const accessCodes = {
-      "CLIENTA": "client-a-k47m2x.html",
-      "CLIENTB": "client-b-r82n5q.html"
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </section>
+
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-inner">
+      <button class="lightbox-btn close-btn" id="close">Close</button>
+      <button class="lightbox-btn arrow-btn prev-btn" id="prev">‹</button>
+      <img id="lightboxImg" class="lightbox-image" alt="Full image">
+      <button class="lightbox-btn arrow-btn next-btn" id="next">›</button>
+      <div class="counter" id="counter">1 / 1</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
+      authDomain: "justmaybemi.firebaseapp.com",
+      projectId: "justmaybemi",
+      storageBucket: "justmaybemi.firebasestorage.app",
+      messagingSenderId: "1025934443334",
+      appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
     };
 
-    function openGallery() {
-      let value = input.value.trim();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    await signInAnonymously(auth);
 
-      if (!value) {
-        errorMessage.style.display = "block";
-        return;
-      }
+    const storage = getStorage(app);
+    const galleryGrid = document.getElementById("galleryGrid");
+    const heroImage = document.getElementById("heroImage");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const counter = document.getElementById("counter");
 
-      const upperValue = value.toUpperCase();
+    const paths = [
+      "galleries/client-a/1.png",
+      "galleries/client-a/2.png",
+      "galleries/client-a/3.png",
+      "galleries/client-a/4.png"
+    ];
 
-      if (accessCodes[upperValue]) {
-        errorMessage.style.display = "none";
-        window.location.href = accessCodes[upperValue];
-        return;
-      }
+    let images = [];
+    let selected = new Set();
+    let selectionMode = false;
+    let index = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-      if (!/^https?:\/\//i.test(value)) {
-        value = "https://" + value;
-      }
+    function updateCounter() {
+      counter.textContent = `${index + 1} / ${images.length}`;
+    }
 
-      try {
-        new URL(value);
-        errorMessage.style.display = "none";
-        window.location.href = value;
-      } catch (error) {
-        errorMessage.style.display = "block";
+    function openLightbox(imageIndex) {
+      index = imageIndex;
+      lightboxImg.src = images[index];
+      updateCounter();
+      lightbox.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    function showNext() {
+      index = (index + 1) % images.length;
+      lightboxImg.src = images[index];
+      updateCounter();
+    }
+
+    function showPrev() {
+      index = (index - 1 + images.length) % images.length;
+      lightboxImg.src = images[index];
+      updateCounter();
+    }
+
+    function download(url) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function downloadAllImages() {
+      images.forEach((url, i) => {
+        setTimeout(() => download(url), i * 320);
+      });
+    }
+
+    function setSelectionUI(active) {
+      selectionMode = active;
+      galleryGrid.classList.toggle("selecting", active);
+      document.getElementById("selectBtn").classList.toggle("hidden", active);
+      document.getElementById("downloadSelected").classList.toggle("hidden", !active);
+      document.getElementById("cancelBtn").classList.toggle("hidden", !active);
+
+      if (!active) {
+        selected.clear();
+        document.querySelectorAll(".photo-card").forEach(card => card.classList.remove("selected"));
       }
     }
 
-    button.addEventListener("click", openGallery);
+    for (let i = 0; i < paths.length; i++) {
+      const url = await getDownloadURL(ref(storage, paths[i]));
+      images.push(url);
 
-    input.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        openGallery();
-      }
+      const card = document.createElement("div");
+      card.className = "photo-card";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "Gallery image";
+
+      const badge = document.createElement("div");
+      badge.className = "selection-badge";
+      badge.textContent = "✓";
+
+      img.addEventListener("click", () => {
+        if (selectionMode) {
+          card.classList.toggle("selected");
+          if (selected.has(url)) selected.delete(url);
+          else selected.add(url);
+        } else {
+          openLightbox(i);
+        }
+      });
+
+      card.appendChild(img);
+      card.appendChild(badge);
+      galleryGrid.appendChild(card);
+    }
+
+    if (images.length) {
+      heroImage.src = images[0];
+    }
+
+    document.getElementById("downloadAll").addEventListener("click", downloadAllImages);
+    document.getElementById("heroDownloadAll").addEventListener("click", downloadAllImages);
+
+    document.getElementById("selectBtn").addEventListener("click", () => {
+      setSelectionUI(true);
     });
+
+    document.getElementById("cancelBtn").addEventListener("click", () => {
+      setSelectionUI(false);
+    });
+
+    document.getElementById("downloadSelected").addEventListener("click", () => {
+      const chosen = Array.from(selected);
+      if (!chosen.length) {
+        alert("Select at least one image first.");
+        return;
+      }
+
+      chosen.forEach((url, i) => {
+        setTimeout(() => download(url), i * 320);
+      });
+    });
+
+    document.getElementById("close").addEventListener("click", closeLightbox);
+    document.getElementById("next").addEventListener("click", showNext);
+    document.getElementById("prev").addEventListener("click", showPrev);
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (!lightbox.classList.contains("active")) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") showNext();
+      if (e.key === "ArrowLeft") showPrev();
+    });
+
+    lightbox.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    lightbox.addEventListener("touchend", (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchEndX - touchStartX;
+      if (Math.abs(diff) < 40) return;
+      if (diff < 0) showNext();
+      else showPrev();
+    }, { passive: true });
   </script>
 </body>
 </html>
