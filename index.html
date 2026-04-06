@@ -111,50 +111,69 @@
       font-size: 0.95rem;
       color: #fff3f3;
     }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.78);
+    }
   </style>
 </head>
 <body>
   <main class="container">
     <img src="logo.png" alt="JustMaybeMi logo" class="logo">
     <h1>JustMaybeMi</h1>
-    <p>Paste your full gallery link below to open your client gallery.</p>
+    <p>Paste your gallery link or enter your access code to open your client gallery.</p>
 
     <div class="input-wrap">
       <input
-        id="linkInput"
-        type="url"
-        placeholder="https://justmaybemi.github.io/Client-Gallery-/client-a-k47m2x.html"
+        id="accessInput"
+        type="text"
+        placeholder="Paste link or enter access code"
         autocomplete="off"
         spellcheck="false"
       >
       <button id="openGalleryBtn" type="button">Open Gallery</button>
     </div>
 
-    <div id="errorMessage" class="error">Please paste a full valid link.</div>
+    <div id="errorMessage" class="error">Please enter a valid gallery link or access code.</div>
+    <div class="hint">Example codes: CLIENTA, CLIENTB</div>
   </main>
 
   <script>
-    const input = document.getElementById("linkInput");
+    const input = document.getElementById("accessInput");
     const button = document.getElementById("openGalleryBtn");
     const errorMessage = document.getElementById("errorMessage");
 
-    function openGallery() {
-      let link = input.value.trim();
+    const accessCodes = {
+      "CLIENTA": "client-a-k47m2x.html",
+      "CLIENTB": "client-b-r82n5q.html"
+    };
 
-      if (!link) {
+    function openGallery() {
+      let value = input.value.trim();
+
+      if (!value) {
         errorMessage.style.display = "block";
         return;
       }
 
-      // Fix common paste issue: missing protocol
-      if (!/^https?:\/\//i.test(link)) {
-        link = "https://" + link;
+      const upperValue = value.toUpperCase();
+
+      if (accessCodes[upperValue]) {
+        errorMessage.style.display = "none";
+        window.location.href = accessCodes[upperValue];
+        return;
+      }
+
+      if (!/^https?:\/\//i.test(value)) {
+        value = "https://" + value;
       }
 
       try {
-        new URL(link);
+        new URL(value);
         errorMessage.style.display = "none";
-        window.location.href = link;
+        window.location.href = value;
       } catch (error) {
         errorMessage.style.display = "block";
       }
