@@ -7,8 +7,6 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
-
   <style>
     body {
       margin: 0;
@@ -32,12 +30,8 @@
 
     .logo {
       width: 65px;
-      height: 65px;
       border-radius: 50%;
       margin-bottom: 10px;
-      border: 2px solid rgba(255,255,255,0.7);
-      padding: 4px;
-      background: rgba(255,255,255,0.15);
     }
 
     .brand-title {
@@ -48,82 +42,82 @@
 
     .gallery-box {
       background: white;
-      color: #111;
+      color: black;
       border-radius: 20px;
       padding: 30px;
-      margin: 0 auto 60px;
+      margin: auto;
       width: 90%;
-      max-width: 1100px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      max-width: 1000px;
     }
 
-    .gallery-heading {
-      text-align: center;
-      margin-bottom: 10px;
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
     }
 
-    .gallery-subtext {
-      text-align: center;
-      color: #666;
-      margin-bottom: 25px;
-    }
-
-    .action-buttons {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .btn {
-      padding: 12px 18px;
-      border-radius: 999px;
-      border: none;
-      background: #111;
-      color: white;
-      cursor: pointer;
+    .gallery-grid img {
+      width: 100%;
+      border-radius: 12px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="top-brand">
-    <img src="logo.png" class="logo">
-    <h1 class="brand-title">JustMaybeMi</h1>
-  </div>
+<div class="top-brand">
+  <img src="logo.png" class="logo">
+  <h1 class="brand-title">JustMaybeMi</h1>
+</div>
 
-  <div class="gallery-box">
+<div class="gallery-box">
+  <h2>Client Gallery</h2>
+  <div class="gallery-grid" id="gallery"></div>
+</div>
 
-    <h2 class="gallery-heading">Client Gallery</h2>
-    <p class="gallery-subtext">Click to view photos. Download selected images.</p>
+<!-- 🔥 FIREBASE CODE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-    <div class="action-buttons">
-      <button class="btn" id="downloadSelectedBtn">Download Selected</button>
-    </div>
+const firebaseConfig = {
+  apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
+  authDomain: "justmaybemi.firebaseapp.com",
+  projectId: "justmaybemi",
+  storageBucket: "justmaybemi.firebasestorage.app",
+  messagingSenderId: "1025934443334",
+  appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
+};
 
-    <section class="gallery-grid" id="galleryGrid"></section>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  </div>
+// 🔐 SIGN IN (REQUIRED FOR PRIVATE ACCESS)
+await signInAnonymously(auth);
 
-  <div class="lightbox" id="lightbox">
-    <div class="lightbox-inner">
-      <button id="closeLightbox">Close</button>
-      <button id="prevBtn">&#10094;</button>
-      <img id="lightboxImage">
-      <button id="nextBtn">&#10095;</button>
-    </div>
-  </div>
+const storage = getStorage(app);
+const gallery = document.getElementById("gallery");
 
-  <script src="script.js"></script>
-  <script>
-    setupClientGallery({
-      images: [
-        "assets/images/client-a/1.png",
-        "assets/images/client-a/2.png",
-        "assets/images/client-a/3.png",
-        "assets/images/client-a/4.png"
-      ]
-    });
-  </script>
+const images = [
+  "galleries/client-a/1.png",
+  "galleries/client-a/2.png",
+  "galleries/client-a/3.png",
+  "galleries/client-a/4.png"
+];
+
+// Load images from Firebase
+for (const path of images) {
+  try {
+    const url = await getDownloadURL(ref(storage, path));
+    const img = document.createElement("img");
+    img.src = url;
+    gallery.appendChild(img);
+  } catch (e) {
+    console.error("Error loading:", path, e);
+  }
+}
+</script>
 
 </body>
 </html>
