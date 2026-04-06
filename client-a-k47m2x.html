@@ -25,13 +25,17 @@
 
     .top-brand {
       text-align: center;
-      padding: 60px 20px 30px;
+      padding: 50px 20px 20px;
     }
 
     .logo {
       width: 65px;
       border-radius: 50%;
       margin-bottom: 10px;
+      border: 2px solid rgba(255,255,255,0.7);
+      padding: 4px;
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
     }
 
     .brand-title {
@@ -40,14 +44,65 @@
       margin: 0;
     }
 
+    .subtitle {
+      margin-top: 10px;
+      font-size: 1.4rem;
+    }
+
+    .subtext {
+      color: rgba(255,255,255,0.82);
+      margin-top: 5px;
+      font-size: 0.95rem;
+    }
+
     .gallery-box {
-      background: white;
-      color: black;
-      border-radius: 20px;
-      padding: 30px;
-      margin: auto;
+      background: rgba(255,255,255,0.98);
+      color: #111;
+      border-radius: 22px;
+      padding: 26px;
+      margin: 20px auto 60px;
       width: 90%;
-      max-width: 1000px;
+      max-width: 1100px;
+      box-shadow:
+        0 35px 80px rgba(34, 8, 26, 0.22),
+        0 18px 40px rgba(0,0,0,0.16),
+        0 0 0 1px rgba(255,255,255,0.25) inset;
+      backdrop-filter: blur(4px);
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      background: #111;
+      color: white;
+    }
+
+    .secondary {
+      background: #eee;
+      color: #111;
+    }
+
+    .hidden {
+      display: none;
     }
 
     .gallery-grid {
@@ -56,9 +111,118 @@
       gap: 15px;
     }
 
-    .gallery-grid img {
+    .photo-card {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      background: #fff;
+    }
+
+    .photo-card img {
       width: 100%;
-      border-radius: 12px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.02);
+    }
+
+    .photo-card.selected {
+      outline: 4px solid #7B024D;
+      box-shadow: 0 10px 24px rgba(123,2,77,0.18);
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+      touch-action: pan-y;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 92%;
+      max-height: 82vh;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: white;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      cursor: pointer;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      backdrop-filter: blur(4px);
+    }
+
+    .prev { left: 20px; }
+    .next { right: 20px; }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 1.1rem;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+    }
+
+    @media (max-width: 800px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-title {
+        font-size: 2.15rem;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+      }
+
+      .gallery-box {
+        padding: 18px;
+        width: 92%;
+      }
+
+      .nav-btn {
+        width: 46px;
+        height: 46px;
+      }
     }
   </style>
 </head>
@@ -66,16 +230,30 @@
 <body>
 
 <div class="top-brand">
-  <img src="logo.png" class="logo">
+  <img src="logo.png" class="logo" alt="Logo">
   <h1 class="brand-title">JustMaybeMi</h1>
+  <div class="subtitle">Client Gallery</div>
+  <div class="subtext">Tap image to view. Use Select to download.</div>
 </div>
 
 <div class="gallery-box">
-  <h2>Client Gallery</h2>
+  <div class="top-actions">
+    <button class="btn primary" id="downloadAll">Download All</button>
+    <button class="btn secondary" id="selectBtn">Select</button>
+    <button class="btn primary hidden" id="downloadSelected">Download Selected</button>
+    <button class="btn secondary hidden" id="cancelBtn">Cancel</button>
+  </div>
+
   <div class="gallery-grid" id="gallery"></div>
 </div>
 
-<!-- 🔥 FIREBASE CODE -->
+<div class="lightbox" id="lightbox">
+  <button class="close" id="close">✕</button>
+  <button class="nav-btn prev" id="prev">‹</button>
+  <img id="lightboxImg" alt="Full image">
+  <button class="nav-btn next" id="next">›</button>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -92,31 +270,134 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-// 🔐 SIGN IN (REQUIRED FOR PRIVATE ACCESS)
 await signInAnonymously(auth);
 
 const storage = getStorage(app);
 const gallery = document.getElementById("gallery");
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
 
-const images = [
+const paths = [
   "galleries/client-a/1.png",
   "galleries/client-a/2.png",
   "galleries/client-a/3.png",
   "galleries/client-a/4.png"
 ];
 
-// Load images from Firebase
-for (const path of images) {
-  try {
-    const url = await getDownloadURL(ref(storage, path));
-    const img = document.createElement("img");
-    img.src = url;
-    gallery.appendChild(img);
-  } catch (e) {
-    console.error("Error loading:", path, e);
-  }
+let images = [];
+let selected = new Set();
+let selectionMode = false;
+let index = 0;
+let touchStartX = 0;
+let touchEndX = 0;
+
+for (let p of paths) {
+  const url = await getDownloadURL(ref(storage, p));
+  images.push(url);
+
+  const card = document.createElement("div");
+  card.className = "photo-card";
+
+  const img = document.createElement("img");
+  img.src = url;
+  img.alt = "Gallery image";
+
+  img.onclick = () => {
+    if (selectionMode) {
+      card.classList.toggle("selected");
+      selected.has(url) ? selected.delete(url) : selected.add(url);
+    } else {
+      index = images.indexOf(url);
+      lightboxImg.src = url;
+      lightbox.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+  };
+
+  card.appendChild(img);
+  gallery.appendChild(card);
 }
+
+function closeLightbox() {
+  lightbox.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function showNext() {
+  index = (index + 1) % images.length;
+  lightboxImg.src = images[index];
+}
+
+function showPrev() {
+  index = (index - 1 + images.length) % images.length;
+  lightboxImg.src = images[index];
+}
+
+document.getElementById("close").onclick = closeLightbox;
+document.getElementById("next").onclick = showNext;
+document.getElementById("prev").onclick = showPrev;
+
+lightbox.addEventListener("click", (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (!lightbox.classList.contains("active")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowRight") showNext();
+  if (e.key === "ArrowLeft") showPrev();
+});
+
+/* Mobile swipe */
+lightbox.addEventListener("touchstart", (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+lightbox.addEventListener("touchend", (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  const diff = touchEndX - touchStartX;
+
+  if (Math.abs(diff) < 40) return;
+
+  if (diff < 0) {
+    showNext();
+  } else {
+    showPrev();
+  }
+}, { passive: true });
+
+document.getElementById("selectBtn").onclick = () => {
+  selectionMode = true;
+  document.getElementById("selectBtn").classList.add("hidden");
+  document.getElementById("downloadSelected").classList.remove("hidden");
+  document.getElementById("cancelBtn").classList.remove("hidden");
+};
+
+document.getElementById("cancelBtn").onclick = () => {
+  selectionMode = false;
+  selected.clear();
+  document.querySelectorAll(".photo-card").forEach(c => c.classList.remove("selected"));
+  document.getElementById("selectBtn").classList.remove("hidden");
+  document.getElementById("downloadSelected").classList.add("hidden");
+  document.getElementById("cancelBtn").classList.add("hidden");
+};
+
+function download(url) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+document.getElementById("downloadAll").onclick = () => {
+  images.forEach((u, i) => setTimeout(() => download(u), i * 300));
+};
+
+document.getElementById("downloadSelected").onclick = () => {
+  Array.from(selected).forEach((u, i) => setTimeout(() => download(u), i * 300));
+};
 </script>
 
 </body>
