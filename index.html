@@ -8,18 +8,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: 'Manrope', sans-serif;
       background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
       background-size: 400% 400%;
       animation: gradientShift 8s ease infinite;
-      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       text-align: center;
+      padding: 24px;
     }
 
     @keyframes gradientShift {
@@ -29,82 +34,139 @@
     }
 
     .container {
-      width: 90%;
-      max-width: 420px;
+      width: 100%;
+      max-width: 460px;
     }
 
     .logo {
-      width: 65px;
-      height: 65px;
+      width: 68px;
+      height: 68px;
+      object-fit: cover;
       border-radius: 50%;
-      margin-bottom: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      border: 2px solid rgba(255,255,255,0.7);
-      background: rgba(255,255,255,0.15);
+      margin: 0 auto 14px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.12);
       padding: 4px;
+      backdrop-filter: blur(4px);
+      display: block;
     }
 
     h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 3rem;
       margin: 0 0 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 4.6rem);
+      line-height: 1;
     }
 
     p {
-      color: rgba(255,255,255,0.85);
-      margin-bottom: 30px;
+      margin: 0 0 26px;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .input-wrap {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 18px;
+      padding: 10px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      border-radius: 10px;
       border: none;
       outline: none;
+      background: white;
+      color: #111;
+      border-radius: 12px;
+      padding: 15px 16px;
       font-size: 1rem;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      border-radius: 999px;
       border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
       background: white;
       color: #111;
-      font-weight: bold;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: 0.3s;
+      transition: transform 0.25s ease, background 0.25s ease;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      background: #ffe6f2;
+      transform: translateY(-1px);
+      background: #ffefe2;
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      color: #fff3f3;
     }
   </style>
 </head>
-
 <body>
-
-  <div class="container">
-    <img src="logo.png" class="logo" alt="logo">
-
+  <main class="container">
+    <img src="logo.png" alt="JustMaybeMi logo" class="logo">
     <h1>JustMaybeMi</h1>
+    <p>Paste your full gallery link below to open your client gallery.</p>
 
-    <p>Enter your gallery link</p>
+    <div class="input-wrap">
+      <input
+        id="linkInput"
+        type="url"
+        placeholder="https://justmaybemi.github.io/Client-Gallery-/client-a-k47m2x.html"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button id="openGalleryBtn" type="button">Open Gallery</button>
+    </div>
 
-    <input id="linkInput" placeholder="Paste your gallery link here...">
-
-    <button onclick="goToGallery()">Open Gallery</button>
-  </div>
+    <div id="errorMessage" class="error">Please paste a full valid link.</div>
+  </main>
 
   <script>
-    function goToGallery() {
-      const link = document.getElementById("linkInput").value.trim();
-      if (!link) return;
-      window.location.href = link;
-    }
-  </script>
+    const input = document.getElementById("linkInput");
+    const button = document.getElementById("openGalleryBtn");
+    const errorMessage = document.getElementById("errorMessage");
 
+    function openGallery() {
+      let link = input.value.trim();
+
+      if (!link) {
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      // Fix common paste issue: missing protocol
+      if (!/^https?:\/\//i.test(link)) {
+        link = "https://" + link;
+      }
+
+      try {
+        new URL(link);
+        errorMessage.style.display = "none";
+        window.location.href = link;
+      } catch (error) {
+        errorMessage.style.display = "block";
+      }
+    }
+
+    button.addEventListener("click", openGallery);
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        openGallery();
+      }
+    });
+  </script>
 </body>
 </html>
