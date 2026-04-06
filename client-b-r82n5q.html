@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Maya Birthday Session | JustMaybeMi</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -10,6 +10,10 @@
   <style>
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -27,33 +31,63 @@
       100% { background-position: 0% 50%; }
     }
 
-    .page-wrap {
-      width: min(92%, 1180px);
-      margin: 0 auto;
-      padding: 40px 0 70px;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    .top-brand {
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.62)),
+        linear-gradient(to right, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.12));
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: min(92%, 1180px);
+      padding: 40px 0 70px;
       text-align: center;
-      padding: 18px 20px 28px;
     }
 
     .brand-link {
-      text-decoration: none;
-      color: inherit;
-      display: inline-block;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .logo {
-      width: 68px;
-      height: 68px;
+      width: 72px;
+      height: 72px;
       object-fit: cover;
       border-radius: 50%;
-      margin-bottom: 12px;
-      border: 2px solid rgba(255,255,255,0.72);
+      border: 2px solid rgba(255,255,255,0.76);
       padding: 4px;
-      background: rgba(255,255,255,0.15);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.14);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
@@ -62,86 +96,110 @@
       opacity: 0.95;
     }
 
-    .brand-title {
+    .brand-name {
       margin: 0;
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2.5rem, 5vw, 4.2rem);
+      font-size: clamp(2.8rem, 6vw, 5rem);
       line-height: 1;
       transition: opacity 0.2s ease;
     }
 
-    .brand-title:hover {
+    .brand-name:hover {
       opacity: 0.95;
     }
 
-    .session-title {
-      margin: 14px 0 8px;
-      font-size: clamp(1.2rem, 2.3vw, 1.7rem);
-      font-weight: 600;
+    .session-label {
+      margin: 10px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.86);
     }
 
-    .subtext {
-      max-width: 620px;
-      margin: 0 auto;
-      color: rgba(255,255,255,0.88);
-      line-height: 1.65;
+    .session-title {
+      margin: 0 0 14px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
+      line-height: 1.04;
+    }
+
+    .hero-text {
+      max-width: 720px;
+      margin: 0 auto 28px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.75;
       font-size: 1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.16);
+    }
+
+    .hero-btn.primary {
+      background: white;
+      color: #111;
+    }
+
+    .hero-btn.secondary {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.42);
+      backdrop-filter: blur(6px);
+    }
+
+    .gallery-section {
+      width: min(92%, 1180px);
+      margin: 0 auto 70px;
+      position: relative;
+      z-index: 3;
+      margin-top: -50px;
     }
 
     .gallery-shell {
       background: rgba(255,255,255,0.98);
       color: #111;
-      border-radius: 26px;
-      padding: 20px 20px 26px;
+      border-radius: 28px;
+      padding: 26px 22px 30px;
       box-shadow:
         0 40px 90px rgba(37, 9, 28, 0.22),
         0 18px 40px rgba(0,0,0,0.14),
-        0 0 0 1px rgba(255,255,255,0.28) inset;
+        0 0 0 1px rgba(255,255,255,0.25) inset;
       backdrop-filter: blur(6px);
     }
 
-    .cover-wrap {
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
+    .gallery-header {
+      text-align: center;
       margin-bottom: 22px;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.14);
     }
 
-    .cover-wrap img {
-      width: 100%;
-      height: min(54vw, 560px);
-      object-fit: cover;
-      display: block;
-    }
-
-    .cover-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.34), rgba(0,0,0,0.06));
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-start;
-      padding: 22px;
-    }
-
-    .cover-text {
-      color: white;
-    }
-
-    .cover-label {
-      margin: 0 0 6px;
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      opacity: 0.9;
-    }
-
-    .cover-heading {
-      margin: 0;
+    .gallery-header h3 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      line-height: 1.05;
+      font-size: clamp(1.7rem, 3vw, 2.5rem);
+      margin: 0 0 8px;
+    }
+
+    .gallery-header p {
+      margin: 0;
+      color: #666;
+      line-height: 1.65;
     }
 
     .top-actions {
@@ -149,7 +207,7 @@
       justify-content: center;
       gap: 12px;
       flex-wrap: wrap;
-      margin: 8px 0 22px;
+      margin-bottom: 24px;
     }
 
     .btn {
@@ -159,7 +217,7 @@
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
     }
 
     .btn:hover {
@@ -189,7 +247,7 @@
 
     .photo-card {
       position: relative;
-      border-radius: 16px;
+      border-radius: 18px;
       overflow: hidden;
       background: white;
       box-shadow: 0 8px 22px rgba(0,0,0,0.08);
@@ -313,32 +371,27 @@
       font-size: 0.95rem;
     }
 
-    @media (max-width: 920px) {
+    @media (max-width: 900px) {
       .gallery-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .cover-wrap img {
-        height: 380px;
+      .gallery-section {
+        margin-top: -30px;
       }
     }
 
     @media (max-width: 580px) {
-      .page-wrap {
-        width: min(94%, 1180px);
-        padding-top: 28px;
+      .hero {
+        min-height: 88vh;
       }
 
       .gallery-shell {
-        padding: 14px 14px 18px;
+        padding: 18px 14px 20px;
       }
 
       .gallery-grid {
         grid-template-columns: 1fr;
-      }
-
-      .cover-wrap img {
-        height: 280px;
       }
 
       .arrow-btn {
@@ -355,29 +408,34 @@
 </head>
 <body>
 
-  <div class="page-wrap">
-    <div class="top-brand">
+  <section class="hero">
+    <img id="heroBg" class="hero-bg" alt="Hero image">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
       <a href="index.html" class="brand-link">
-        <img src="logo.png" class="logo" alt="Logo">
+        <img src="logo.png" class="logo" alt="JustMaybeMi logo">
+        <h1 class="brand-name">JustMaybeMi</h1>
       </a>
 
-      <a href="index.html" class="brand-link">
-        <h1 class="brand-title">JustMaybeMi</h1>
-      </a>
+      <p class="session-label">Private Client Gallery</p>
+      <h2 class="session-title">Maya Birthday Session</h2>
+      <p class="hero-text">
+        A curated collection from your session, presented in an elevated gallery experience. Scroll down to explore the full gallery, open images in full screen, or download your selected favorites.
+      </p>
 
-      <div class="session-title">Maya Birthday Session</div>
-      <p class="subtext">A curated gallery from your session. Tap an image to view it full screen, or use Select to choose your favorites.</p>
+      <div class="hero-actions">
+        <a href="#gallery" class="hero-btn primary">View Gallery</a>
+        <button class="hero-btn secondary" id="heroDownloadAll" type="button">Download All</button>
+      </div>
     </div>
+  </section>
 
+  <section class="gallery-section" id="gallery">
     <div class="gallery-shell">
-      <div class="cover-wrap">
-        <img id="coverImage" alt="Gallery cover">
-        <div class="cover-overlay">
-          <div class="cover-text">
-            <p class="cover-label">Private Gallery</p>
-            <h2 class="cover-heading">Maya Birthday Session</h2>
-          </div>
-        </div>
+      <div class="gallery-header">
+        <h3>Full Gallery</h3>
+        <p>Tap any image to view it larger. Use Select to choose favorites, or download the full set.</p>
       </div>
 
       <div class="top-actions">
@@ -387,9 +445,9 @@
         <button class="btn btn-secondary hidden" id="cancelBtn">Cancel</button>
       </div>
 
-      <div class="gallery-grid" id="gallery"></div>
+      <div class="gallery-grid" id="galleryGrid"></div>
     </div>
-  </div>
+  </section>
 
   <div class="lightbox" id="lightbox">
     <div class="lightbox-inner">
@@ -420,8 +478,8 @@
     await signInAnonymously(auth);
 
     const storage = getStorage(app);
-    const gallery = document.getElementById("gallery");
-    const coverImage = document.getElementById("coverImage");
+    const galleryGrid = document.getElementById("galleryGrid");
+    const heroBg = document.getElementById("heroBg");
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightboxImg");
     const counter = document.getElementById("counter");
@@ -478,9 +536,15 @@
       a.remove();
     }
 
+    function downloadAllImages() {
+      images.forEach((url, i) => {
+        setTimeout(() => download(url), i * 320);
+      });
+    }
+
     function setSelectionUI(active) {
       selectionMode = active;
-      gallery.classList.toggle("selecting", active);
+      galleryGrid.classList.toggle("selecting", active);
       document.getElementById("selectBtn").classList.toggle("hidden", active);
       document.getElementById("downloadSelected").classList.toggle("hidden", !active);
       document.getElementById("cancelBtn").classList.toggle("hidden", !active);
@@ -509,11 +573,8 @@
       img.addEventListener("click", () => {
         if (selectionMode) {
           card.classList.toggle("selected");
-          if (selected.has(url)) {
-            selected.delete(url);
-          } else {
-            selected.add(url);
-          }
+          if (selected.has(url)) selected.delete(url);
+          else selected.add(url);
         } else {
           openLightbox(i);
         }
@@ -521,18 +582,15 @@
 
       card.appendChild(img);
       card.appendChild(badge);
-      gallery.appendChild(card);
+      galleryGrid.appendChild(card);
     }
 
     if (images.length) {
-      coverImage.src = images[0];
+      heroBg.src = images[0];
     }
 
-    document.getElementById("downloadAll").addEventListener("click", () => {
-      images.forEach((url, i) => {
-        setTimeout(() => download(url), i * 320);
-      });
-    });
+    document.getElementById("downloadAll").addEventListener("click", downloadAllImages);
+    document.getElementById("heroDownloadAll").addEventListener("click", downloadAllImages);
 
     document.getElementById("selectBtn").addEventListener("click", () => {
       setSelectionUI(true);
