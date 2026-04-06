@@ -18,7 +18,7 @@ function setupClientGallery(config) {
       card.className = "photo-card";
 
       card.innerHTML = `
-        <div class="photo-image-wrap" data-index="${index}">
+        <div class="photo-image-wrap">
           <img src="${imagePath}" alt="Gallery image ${index + 1}">
         </div>
         <label class="photo-select">
@@ -27,16 +27,14 @@ function setupClientGallery(config) {
         </label>
       `;
 
-      const imageWrap = card.querySelector(".photo-image-wrap");
-      imageWrap.addEventListener("click", () => openLightbox(index));
-
+      card.querySelector(".photo-image-wrap").addEventListener("click", () => openLightbox(index));
       galleryGrid.appendChild(card);
     });
   }
 
   function openLightbox(index) {
     currentIndex = index;
-    updateLightbox();
+    lightboxImage.src = images[currentIndex];
     lightbox.classList.add("active");
     document.body.style.overflow = "hidden";
   }
@@ -46,18 +44,14 @@ function setupClientGallery(config) {
     document.body.style.overflow = "";
   }
 
-  function updateLightbox() {
-    lightboxImage.src = images[currentIndex];
-  }
-
   function showNextImage() {
     currentIndex = (currentIndex + 1) % images.length;
-    updateLightbox();
+    lightboxImage.src = images[currentIndex];
   }
 
   function showPreviousImage() {
     currentIndex = (currentIndex - 1 + images.length) % images.length;
-    updateLightbox();
+    lightboxImage.src = images[currentIndex];
   }
 
   function downloadFile(filePath) {
@@ -90,21 +84,14 @@ function setupClientGallery(config) {
   downloadSelectedBtn.addEventListener("click", downloadSelectedImages);
 
   lightbox.addEventListener("click", function (event) {
-    if (event.target === lightbox) {
-      closeLightbox();
-    }
+    if (event.target === lightbox) closeLightbox();
   });
 
   document.addEventListener("keydown", function (event) {
     if (!lightbox.classList.contains("active")) return;
-
-    if (event.key === "Escape") {
-      closeLightbox();
-    } else if (event.key === "ArrowRight") {
-      showNextImage();
-    } else if (event.key === "ArrowLeft") {
-      showPreviousImage();
-    }
+    if (event.key === "Escape") closeLightbox();
+    if (event.key === "ArrowRight") showNextImage();
+    if (event.key === "ArrowLeft") showPreviousImage();
   });
 
   renderGallery();
