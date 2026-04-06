@@ -81,7 +81,9 @@ function setupClientGallery(config) {
   closeLightboxBtn.addEventListener("click", closeLightbox);
   prevBtn.addEventListener("click", showPreviousImage);
   nextBtn.addEventListener("click", showNextImage);
-  downloadSelectedBtn.addEventListener("click", downloadSelectedImages);
+  if (downloadSelectedBtn) {
+    downloadSelectedBtn.addEventListener("click", downloadSelectedImages);
+  }
 
   lightbox.addEventListener("click", function (event) {
     if (event.target === lightbox) closeLightbox();
