@@ -1,65 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Client Gallery | By Funmi Photography</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jane Client Gallery</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container nav">
-      <a href="index.html" class="brand">By Funmi Photography</a>
-      <nav>
-        <a href="index.html">Home</a>
-      </nav>
-    </div>
-  </header>
+  <main class="page">
+    <section class="top-section">
+      <img src="logo.png" alt="Logo" class="logo">
+      <div class="brand-name">Funmi Photography</div>
 
-  <main class="gallery-page container">
-    <section class="gallery-hero">
-      <a href="index.html" class="back-link">← Back to Home</a>
-      <p class="section-label">Private Client Gallery</p>
-      <h1>Adeola – Portrait Session</h1>
-      <p>
-        A curated selection from your session. Click any image to view it fullscreen and download your favorites.
+      <h1 class="gallery-heading">Jane Client Gallery</h1>
+      <p class="gallery-subtext">
+        Click to view photos. Select images to download, or download the full gallery.
       </p>
 
-      <div class="gallery-actions">
-        <a class="btn btn-primary" href="assets/images/client-a/1.jpg" download>Download Cover Image</a>
-        <a class="btn btn-secondary" href="mailto:yourname@email.com">Contact Photographer</a>
+      <div class="action-buttons">
+        <a
+          class="btn btn-primary"
+          href="assets/images/client-jane/client-jane-gallery.zip"
+          download
+        >
+          Download All
+        </a>
+
+        <button class="btn" id="downloadSelectedBtn" type="button">
+          Download Selected
+        </button>
       </div>
     </section>
 
     <section class="gallery-grid" id="galleryGrid"></section>
+
+    <p class="footer-note">Funmi Photography</p>
   </main>
 
   <div class="lightbox" id="lightbox">
     <div class="lightbox-inner">
-      <div class="lightbox-topbar">
-        <div class="lightbox-count" id="lightboxCount">1 / 1</div>
-        <div class="lightbox-controls">
-          <a id="downloadCurrent" class="lightbox-btn" href="#" download>Download</a>
-          <button id="closeLightbox" class="lightbox-btn" type="button">Close</button>
-        </div>
-      </div>
-
-      <div class="lightbox-stage">
-        <button class="lightbox-arrow left" id="prevBtn" type="button">&#10094;</button>
-        <img id="lightboxImage" class="lightbox-image" src="" alt="Full gallery image" />
-        <button class="lightbox-arrow right" id="nextBtn" type="button">&#10095;</button>
-      </div>
+      <button class="lightbox-close" id="closeLightbox" type="button">Close</button>
+      <button class="lightbox-arrow left" id="prevBtn" type="button">&#10094;</button>
+      <img id="lightboxImage" class="lightbox-image" src="" alt="Full size photo">
+      <button class="lightbox-arrow right" id="nextBtn" type="button">&#10095;</button>
     </div>
   </div>
 
   <script src="script.js"></script>
   <script>
-    setupGallery([
-      "assets/images/client-a/1.jpg",
-      "assets/images/client-a/2.jpg",
-      "assets/images/client-a/3.jpg",
-      "assets/images/client-a/4.jpg"
-    ]);
+    setupClientGallery({
+      images: [
+        "assets/images/client-jane/1.jpg",
+        "assets/images/client-jane/2.jpg",
+        "assets/images/client-jane/3.jpg",
+        "assets/images/client-jane/4.jpg"
+      ]
+    });
   </script>
 </body>
 </html>
