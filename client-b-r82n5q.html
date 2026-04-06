@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Gallery | By Funmi Photography</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a href="index.html" class="brand">By Funmi Photography</a>
+      <nav>
+        <a href="index.html">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="gallery-page container">
+    <section class="gallery-hero">
+      <a href="index.html" class="back-link">← Back to Home</a>
+      <p class="section-label">Private Client Gallery</p>
+      <h1>Maya – Birthday Shoot</h1>
+      <p>
+        Your gallery is ready. Click on an image to open the full viewer and download your selections.
+      </p>
+
+      <div class="gallery-actions">
+        <a class="btn btn-primary" href="assets/images/client-b/1.jpg" download>Download Cover Image</a>
+        <a class="btn btn-secondary" href="mailto:yourname@email.com">Contact Photographer</a>
+      </div>
+    </section>
+
+    <section class="gallery-grid" id="galleryGrid"></section>
+  </main>
+
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-inner">
+      <div class="lightbox-topbar">
+        <div class="lightbox-count" id="lightboxCount">1 / 1</div>
+        <div class="lightbox-controls">
+          <a id="downloadCurrent" class="lightbox-btn" href="#" download>Download</a>
+          <button id="closeLightbox" class="lightbox-btn" type="button">Close</button>
+        </div>
+      </div>
+
+      <div class="lightbox-stage">
+        <button class="lightbox-arrow left" id="prevBtn" type="button">&#10094;</button>
+        <img id="lightboxImage" class="lightbox-image" src="" alt="Full gallery image" />
+        <button class="lightbox-arrow right" id="nextBtn" type="button">&#10095;</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    setupGallery([
+      "assets/images/client-b/1.jpg",
+      "assets/images/client-b/2.jpg",
+      "assets/images/client-b/3.jpg",
+      "assets/images/client-b/4.jpg"
+    ]);
+  </script>
+</body>
+</html>
