@@ -1,35 +1,37 @@
-function setupGallery(imagePaths) {
-  const grid = document.getElementById("galleryGrid");
+function setupClientGallery(config) {
+  const galleryGrid = document.getElementById("galleryGrid");
   const lightbox = document.getElementById("lightbox");
   const lightboxImage = document.getElementById("lightboxImage");
-  const lightboxCount = document.getElementById("lightboxCount");
-  const downloadCurrent = document.getElementById("downloadCurrent");
-  const closeLightbox = document.getElementById("closeLightbox");
+  const closeLightboxBtn = document.getElementById("closeLightbox");
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const downloadSelectedBtn = document.getElementById("downloadSelectedBtn");
 
+  const images = config.images || [];
   let currentIndex = 0;
-  let touchStartX = 0;
-  let touchEndX = 0;
 
-  function renderGrid() {
-    imagePaths.forEach((path, index) => {
-      const item = document.createElement("div");
-      item.className = "gallery-item";
-      item.innerHTML = `
-        <img src="${path}" alt="Gallery image ${index + 1}" loading="lazy">
-        <a class="download-chip" href="${path}" download onclick="event.stopPropagation()">Download</a>
+  function renderGallery() {
+    galleryGrid.innerHTML = "";
+
+    images.forEach((imagePath, index) => {
+      const card = document.createElement("div");
+      card.className = "photo-card";
+
+      card.innerHTML = `
+        <div class="photo-image-wrap" data-index="${index}">
+          <img src="${imagePath}" alt="Gallery image ${index + 1}">
+        </div>
+        <label class="photo-select">
+          <input type="checkbox" class="photo-checkbox" value="${imagePath}">
+          Select for download
+        </label>
       `;
-      item.addEventListener("click", () => openLightbox(index));
-      grid.appendChild(item);
-    });
-  }
 
-  function updateLightbox() {
-    const currentImage = imagePaths[currentIndex];
-    lightboxImage.src = currentImage;
-    lightboxCount.textContent = `${currentIndex + 1} / ${imagePaths.length}`;
-    downloadCurrent.href = currentImage;
+      const imageWrap = card.querySelector(".photo-image-wrap");
+      imageWrap.addEventListener("click", () => openLightbox(index));
+
+      galleryGrid.appendChild(card);
+    });
   }
 
   function openLightbox(index) {
@@ -39,54 +41,71 @@ function setupGallery(imagePaths) {
     document.body.style.overflow = "hidden";
   }
 
-  function closeBox() {
+  function closeLightbox() {
     lightbox.classList.remove("active");
     document.body.style.overflow = "";
   }
 
-  function showNext() {
-    currentIndex = (currentIndex + 1) % imagePaths.length;
+  function updateLightbox() {
+    lightboxImage.src = images[currentIndex];
+  }
+
+  function showNextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
     updateLightbox();
   }
 
-  function showPrev() {
-    currentIndex = (currentIndex - 1 + imagePaths.length) % imagePaths.length;
+  function showPreviousImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
     updateLightbox();
   }
 
-  closeLightbox.addEventListener("click", closeBox);
-  nextBtn.addEventListener("click", showNext);
-  prevBtn.addEventListener("click", showPrev);
+  function downloadFile(filePath) {
+    const link = document.createElement("a");
+    link.href = filePath;
+    link.download = "";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
 
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) closeBox();
-  });
+  function downloadSelectedImages() {
+    const selectedCheckboxes = document.querySelectorAll(".photo-checkbox:checked");
 
-  document.addEventListener("keydown", (e) => {
-    if (!lightbox.classList.contains("active")) return;
-    if (e.key === "Escape") closeBox();
-    if (e.key === "ArrowRight") showNext();
-    if (e.key === "ArrowLeft") showPrev();
-  });
-
-  lightbox.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  });
-
-  lightbox.addEventListener("touchend", (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  });
-
-  function handleSwipe() {
-    const diff = touchEndX - touchStartX;
-    if (Math.abs(diff) < 40) return;
-    if (diff < 0) {
-      showNext();
-    } else {
-      showPrev();
+    if (selectedCheckboxes.length === 0) {
+      alert("Please select at least one photo.");
+      return;
     }
+
+    selectedCheckboxes.forEach((checkbox, index) => {
+      setTimeout(() => {
+        downloadFile(checkbox.value);
+      }, index * 300);
+    });
   }
 
-  renderGrid();
+  closeLightboxBtn.addEventListener("click", closeLightbox);
+  prevBtn.addEventListener("click", showPreviousImage);
+  nextBtn.addEventListener("click", showNextImage);
+  downloadSelectedBtn.addEventListener("click", downloadSelectedImages);
+
+  lightbox.addEventListener("click", function (event) {
+    if (event.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (!lightbox.classList.contains("active")) return;
+
+    if (event.key === "Escape") {
+      closeLightbox();
+    } else if (event.key === "ArrowRight") {
+      showNextImage();
+    } else if (event.key === "ArrowLeft") {
+      showPreviousImage();
+    }
+  });
+
+  renderGallery();
 }
