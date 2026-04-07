@@ -1,76 +1,85 @@
-const { onCall, HttpsError } = require("firebase-functions/v2/https");
-const { logger } = require("firebase-functions");
-const { initializeApp } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
-const { getStorage } = require("firebase-admin/storage");
-
-initializeApp();
-
-exports.unlockGallery = onCall({ region: "northamerica-northeast2" }, async (request) => {
-  try {
-    const code = String(request.data.code || "").trim().toUpperCase();
-
-    if (!code) {
-      throw new HttpsError("invalid-argument", "Missing access code.");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JustMaybeMi</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
+      background-size: 400% 400%;
+      animation: gradientShift 8s ease infinite;
+      color: white;
+      text-align: center;
+      padding: 24px;
     }
-
-    const db = getFirestore();
-    const snap = await db.collection("accessCodes").doc(code).get();
-
-    if (!snap.exists) {
-      throw new HttpsError("permission-denied", "Invalid access code.");
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-
-    const data = snap.data();
-
-    if (!data.active) {
-      throw new HttpsError("permission-denied", "Gallery inactive.");
+    .box {
+      max-width: 420px;
+      width: 100%;
     }
-
-    const bucket = getStorage().bucket();
-
-    const total = parseInt(data.count, 10);
-
-    logger.info("COUNT DEBUG", {
-      count: data.count,
-      parsed: total,
-      type: typeof data.count,
-      folder: data.folder
-    });
-
-    if (isNaN(total) || total < 1) {
-      throw new HttpsError("internal", "Invalid image count.");
+    img {
+      width: 68px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 14px;
+      border: 2px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.12);
+      padding: 4px;
     }
-
-    const expires = Date.now() + 60 * 60 * 1000;
-    const images = [];
-
-    for (let i = 1; i <= total; i++) {
-      const filePath = `galleries/${data.folder}/${i}.png`;
-      const file = bucket.file(filePath);
-
-      logger.info("FILE DEBUG", { filePath });
-
-      const [url] = await file.getSignedUrl({
-        version: "v4",
-        action: "read",
-        expires
-      });
-
-      images.push(url);
+    h1 { margin: 0 0 10px; font-size: 3rem; }
+    p { margin: 0 0 20px; }
+    input, button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 999px;
+      border: none;
+      margin-top: 10px;
+      font-size: 1rem;
     }
+    input {
+      border-radius: 12px;
+    }
+    button {
+      background: white;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <img src="logo.png" alt="Logo">
+    <h1>JustMaybeMi</h1>
+    <p>Enter your gallery access code</p>
+    <input id="codeInput" type="text" placeholder="CLIENTA or CLIENTB">
+    <button onclick="openGallery()">Open Gallery</button>
+  </div>
 
-    logger.info("RETURN DEBUG", {
-      sessionTitle: data.sessionTitle,
-      imageCount: images.length
-    });
+  <script>
+    function openGallery() {
+      const code = document.getElementById("codeInput").value.trim().toUpperCase();
 
-    return {
-      sessionTitle: data.sessionTitle,
-      images
-    };
-  } catch (error) {
-    logger.error("unlockGallery failed", error);
-    throw new HttpsError("internal", error.message || "Internal error");
-  }
-});
+      if (code === "CLIENTA") {
+        window.location.href = "client-a-k47m2x.html";
+      } else if (code === "CLIENTB") {
+        window.location.href = "client-b-r82n5q.html";
+      } else {
+        alert("Invalid code");
+      }
+    }
+  </script>
+</body>
+</html>
