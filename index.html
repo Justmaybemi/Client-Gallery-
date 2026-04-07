@@ -1,175 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JustMaybeMi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; }
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { logger } = require("firebase-functions");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
+const { getStorage } = require("firebase-admin/storage");
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: 'Manrope', sans-serif;
-      background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
-      background-size: 400% 400%;
-      animation: gradientShift 8s ease infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-      padding: 24px;
+initializeApp();
+
+exports.unlockGallery = onCall({ region: "northamerica-northeast2" }, async (request) => {
+  try {
+    const code = String(request.data.code || "").trim().toUpperCase();
+
+    if (!code) {
+      throw new HttpsError("invalid-argument", "Missing access code.");
     }
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    const db = getFirestore();
+    const snap = await db.collection("accessCodes").doc(code).get();
+
+    if (!snap.exists) {
+      throw new HttpsError("permission-denied", "Invalid access code.");
     }
 
-    .container {
-      width: 100%;
-      max-width: 460px;
+    const data = snap.data();
+
+    if (!data.active) {
+      throw new HttpsError("permission-denied", "Gallery inactive.");
     }
 
-    .logo {
-      width: 68px;
-      height: 68px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin: 0 auto 14px;
-      display: block;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      background: rgba(255, 255, 255, 0.12);
-      padding: 4px;
-    }
+    const bucket = getStorage().bucket();
 
-    h1 {
-      margin: 0 0 10px;
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 7vw, 4.6rem);
-      line-height: 1;
-    }
+    const total = parseInt(data.count, 10);
 
-    p {
-      margin: 0 0 26px;
-      color: rgba(255, 255, 255, 0.88);
-      line-height: 1.6;
-      font-size: 1rem;
-    }
-
-    .input-wrap {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      border-radius: 18px;
-      padding: 10px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
-    }
-
-    input {
-      width: 100%;
-      border: none;
-      outline: none;
-      background: white;
-      color: #111;
-      border-radius: 12px;
-      padding: 15px 16px;
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 999px;
-      padding: 14px 18px;
-      background: white;
-      color: #111;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .error {
-      display: none;
-      margin-top: 12px;
-      font-size: 0.95rem;
-      color: #fff3f3;
-      white-space: pre-wrap;
-    }
-  </style>
-</head>
-<body>
-  <main class="container">
-    <img src="logo.png" alt="JustMaybeMi logo" class="logo">
-    <h1>JustMaybeMi</h1>
-    <p>Enter your access code to open your gallery.</p>
-
-    <div class="input-wrap">
-      <input id="codeInput" type="text" placeholder="Enter access code" autocomplete="off" spellcheck="false">
-      <button id="openGalleryBtn" type="button">Open Gallery</button>
-    </div>
-
-    <div id="errorMessage" class="error"></div>
-  </main>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
-      authDomain: "justmaybemi.firebaseapp.com",
-      projectId: "justmaybemi",
-      storageBucket: "justmaybemi.firebasestorage.app",
-      messagingSenderId: "1025934443334",
-      appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
-    };
-
-    const app = initializeApp(firebaseConfig);
-
-    // Correct region
-    const functions = getFunctions(app, "northamerica-northeast2");
-
-    const unlockGallery = httpsCallable(functions, "unlockGallery");
-
-    const input = document.getElementById("codeInput");
-    const button = document.getElementById("openGalleryBtn");
-    const errorMessage = document.getElementById("errorMessage");
-
-    async function openGallery() {
-      const code = input.value.trim().toUpperCase();
-      errorMessage.style.display = "none";
-      errorMessage.textContent = "";
-
-      if (!code) {
-        errorMessage.textContent = "Please enter a code.";
-        errorMessage.style.display = "block";
-        return;
-      }
-
-      try {
-        const result = await unlockGallery({ code });
-        sessionStorage.setItem("galleryData", JSON.stringify(result.data));
-        window.location.href = "gallery.html";
-      } catch (e) {
-        console.error("FULL ERROR:", e);
-        errorMessage.textContent =
-          "code: " + (e.code || "none") + "\n" +
-          "message: " + (e.message || "none") + "\n" +
-          "details: " + JSON.stringify(e.details ?? null);
-        errorMessage.style.display = "block";
-      }
-    }
-
-    button.addEventListener("click", openGallery);
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") openGallery();
+    logger.info("COUNT DEBUG", {
+      count: data.count,
+      parsed: total,
+      type: typeof data.count,
+      folder: data.folder
     });
-  </script>
-</body>
-</html>
+
+    if (isNaN(total) || total < 1) {
+      throw new HttpsError("internal", "Invalid image count.");
+    }
+
+    const expires = Date.now() + 60 * 60 * 1000;
+    const images = [];
+
+    for (let i = 1; i <= total; i++) {
+      const filePath = `galleries/${data.folder}/${i}.png`;
+      const file = bucket.file(filePath);
+
+      logger.info("FILE DEBUG", { filePath });
+
+      const [url] = await file.getSignedUrl({
+        version: "v4",
+        action: "read",
+        expires
+      });
+
+      images.push(url);
+    }
+
+    logger.info("RETURN DEBUG", {
+      sessionTitle: data.sessionTitle,
+      imageCount: images.length
+    });
+
+    return {
+      sessionTitle: data.sessionTitle,
+      images
+    };
+  } catch (error) {
+    logger.error("unlockGallery failed", error);
+    throw new HttpsError("internal", error.message || "Internal error");
+  }
+});
