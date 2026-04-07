@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JustMaybeMi</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -44,12 +40,11 @@
       object-fit: cover;
       border-radius: 50%;
       margin: 0 auto 14px;
+      display: block;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
       border: 2px solid rgba(255, 255, 255, 0.7);
       background: rgba(255, 255, 255, 0.12);
       padding: 4px;
-      backdrop-filter: blur(4px);
-      display: block;
     }
 
     h1 {
@@ -97,12 +92,6 @@
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.25s ease, background 0.25s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      background: #ffefe2;
     }
 
     .error {
@@ -111,80 +100,65 @@
       font-size: 0.95rem;
       color: #fff3f3;
     }
-
-    .hint {
-      margin-top: 14px;
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.78);
-    }
   </style>
 </head>
 <body>
   <main class="container">
     <img src="logo.png" alt="JustMaybeMi logo" class="logo">
     <h1>JustMaybeMi</h1>
-    <p>Paste your gallery link or enter your access code to open your client gallery.</p>
+    <p>Enter your access code to open your gallery.</p>
 
     <div class="input-wrap">
-      <input
-        id="accessInput"
-        type="text"
-        placeholder="Paste link or enter access code"
-        autocomplete="off"
-        spellcheck="false"
-      >
+      <input id="codeInput" type="text" placeholder="Enter access code" autocomplete="off" spellcheck="false">
       <button id="openGalleryBtn" type="button">Open Gallery</button>
     </div>
 
-    <div id="errorMessage" class="error">Please enter a valid gallery link or access code.</div>
-    <div class="hint">Example codes: CLIENTA, CLIENTB</div>
+    <div id="errorMessage" class="error">Invalid code.</div>
   </main>
 
-  <script>
-    const input = document.getElementById("accessInput");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
+      authDomain: "justmaybemi.firebaseapp.com",
+      projectId: "justmaybemi",
+      storageBucket: "justmaybemi.firebasestorage.app",
+      messagingSenderId: "1025934443334",
+      appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const functions = getFunctions(app, "northamerica-northeast2");
+    const unlockGallery = httpsCallable(functions, "unlockGallery");
+
+    const input = document.getElementById("codeInput");
     const button = document.getElementById("openGalleryBtn");
     const errorMessage = document.getElementById("errorMessage");
 
-    const accessCodes = {
-      "CLIENTA": "client-a-k47m2x.html",
-      "CLIENTB": "client-b-r82n5q.html"
-    };
+    async function openGallery() {
+      const code = input.value.trim().toUpperCase();
 
-    function openGallery() {
-      let value = input.value.trim();
-
-      if (!value) {
+      if (!code) {
         errorMessage.style.display = "block";
         return;
       }
 
-      const upperValue = value.toUpperCase();
-
-      if (accessCodes[upperValue]) {
-        errorMessage.style.display = "none";
-        window.location.href = accessCodes[upperValue];
-        return;
-      }
-
-      if (!/^https?:\/\//i.test(value)) {
-        value = "https://" + value;
-      }
-
       try {
-        new URL(value);
+        const result = await unlockGallery({ code });
+        sessionStorage.setItem("galleryData", JSON.stringify(result.data));
         errorMessage.style.display = "none";
-        window.location.href = value;
-      } catch (error) {
+        window.location.href = "gallery.html";
+      } catch (e) {
+        console.error(e);
         errorMessage.style.display = "block";
       }
     }
 
     button.addEventListener("click", openGallery);
-
-    input.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        openGallery();
-      }
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") openGallery();
     });
   </script>
 </body>
