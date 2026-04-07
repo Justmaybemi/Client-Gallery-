@@ -7,98 +7,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
-
     body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: 'Manrope', sans-serif;
+      margin: 0; min-height: 100vh; font-family: 'Manrope', sans-serif;
       background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
-      background-size: 400% 400%;
-      animation: gradientShift 8s ease infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-      padding: 24px;
+      background-size: 400% 400%; animation: gradientShift 8s ease infinite;
+      display: flex; align-items: center; justify-content: center;
+      color: white; text-align: center; padding: 24px;
     }
-
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
-    .container {
-      width: 100%;
-      max-width: 460px;
-    }
-
+    .container { width: 100%; max-width: 460px; }
     .logo {
-      width: 68px;
-      height: 68px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin: 0 auto 14px;
-      display: block;
+      width: 68px; height: 68px; object-fit: cover; border-radius: 50%;
+      margin: 0 auto 14px; display: block;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
       border: 2px solid rgba(255, 255, 255, 0.7);
-      background: rgba(255, 255, 255, 0.12);
-      padding: 4px;
+      background: rgba(255, 255, 255, 0.12); padding: 4px;
     }
-
     h1 {
-      margin: 0 0 10px;
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 7vw, 4.6rem);
-      line-height: 1;
+      margin: 0 0 10px; font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 4.6rem); line-height: 1;
     }
-
     p {
-      margin: 0 0 26px;
-      color: rgba(255, 255, 255, 0.88);
-      line-height: 1.6;
-      font-size: 1rem;
+      margin: 0 0 26px; color: rgba(255, 255, 255, 0.88);
+      line-height: 1.6; font-size: 1rem;
     }
-
     .input-wrap {
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.45);
-      border-radius: 18px;
-      padding: 10px;
-      backdrop-filter: blur(8px);
+      border-radius: 18px; padding: 10px; backdrop-filter: blur(8px);
       box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
     }
-
     input {
-      width: 100%;
-      border: none;
-      outline: none;
-      background: white;
-      color: #111;
-      border-radius: 12px;
-      padding: 15px 16px;
-      font-size: 1rem;
-      margin-bottom: 10px;
+      width: 100%; border: none; outline: none; background: white; color: #111;
+      border-radius: 12px; padding: 15px 16px; font-size: 1rem; margin-bottom: 10px;
     }
-
     button {
-      width: 100%;
-      border: none;
-      border-radius: 999px;
-      padding: 14px 18px;
-      background: white;
-      color: #111;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
+      width: 100%; border: none; border-radius: 999px; padding: 14px 18px;
+      background: white; color: #111; font-size: 1rem; font-weight: 700; cursor: pointer;
     }
-
     .error {
-      display: none;
-      margin-top: 12px;
-      font-size: 0.95rem;
-      color: #fff3f3;
+      display: none; margin-top: 12px; font-size: 0.95rem; color: #fff3f3;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -113,7 +66,7 @@
       <button id="openGalleryBtn" type="button">Open Gallery</button>
     </div>
 
-    <div id="errorMessage" class="error">Invalid code.</div>
+    <div id="errorMessage" class="error"></div>
   </main>
 
   <script type="module">
@@ -130,7 +83,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const functions = getFunctions(app, "us-central1");
+    const functions = getFunctions(app);
     const unlockGallery = httpsCallable(functions, "unlockGallery");
 
     const input = document.getElementById("codeInput");
@@ -139,8 +92,11 @@
 
     async function openGallery() {
       const code = input.value.trim().toUpperCase();
+      errorMessage.style.display = "none";
+      errorMessage.textContent = "";
 
       if (!code) {
+        errorMessage.textContent = "Please enter a code.";
         errorMessage.style.display = "block";
         return;
       }
@@ -148,10 +104,13 @@
       try {
         const result = await unlockGallery({ code });
         sessionStorage.setItem("galleryData", JSON.stringify(result.data));
-        errorMessage.style.display = "none";
         window.location.href = "gallery.html";
       } catch (e) {
-        console.error(e);
+        console.error("FULL ERROR:", e);
+        errorMessage.textContent =
+          "code: " + (e.code || "none") + "\n" +
+          "message: " + (e.message || "none") + "\n" +
+          "details: " + JSON.stringify(e.details ?? null);
         errorMessage.style.display = "block";
       }
     }
