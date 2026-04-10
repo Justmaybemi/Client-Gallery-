@@ -559,164 +559,171 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
-      authDomain: "justmaybemi.firebaseapp.com",
-      projectId: "justmaybemi",
-      storageBucket: "justmaybemi.firebasestorage.app",
-      messagingSenderId: "1025934443334",
-      appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
+    authDomain: "justmaybemi.firebaseapp.com",
+    projectId: "justmaybemi",
+    storageBucket: "justmaybemi.firebasestorage.app",
+    messagingSenderId: "1025934443334",
+    appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    await signInAnonymously(auth);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  await signInAnonymously(auth);
 
-    const storage = getStorage(app);
-    const galleryGrid = document.getElementById("galleryGrid");
-    const heroBg = document.getElementById("heroBg");
-    const lightbox = document.getElementById("lightbox");
-    const lightboxImg = document.getElementById("lightboxImg");
-    const counter = document.getElementById("counter");
+  const storage = getStorage(app);
+  const galleryGrid = document.getElementById("galleryGrid");
+  const heroBg = document.getElementById("heroBg");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+  const counter = document.getElementById("counter");
 
-    const selectionBar = document.getElementById("selectionBar");
-    const selectionInfo = document.getElementById("selectionInfo");
-    const selectBtn = document.getElementById("selectBtn");
-    const downloadSelectedTop = document.getElementById("downloadSelectedTop");
-    const cancelSelectTop = document.getElementById("cancelSelectTop");
-    const downloadSelectedBar = document.getElementById("downloadSelectedBar");
-    const cancelSelectionBar = document.getElementById("cancelSelectionBar");
+  const selectionBar = document.getElementById("selectionBar");
+  const selectionInfo = document.getElementById("selectionInfo");
+  const selectBtn = document.getElementById("selectBtn");
+  const downloadSelectedTop = document.getElementById("downloadSelectedTop");
+  const cancelSelectTop = document.getElementById("cancelSelectTop");
+  const downloadSelectedBar = document.getElementById("downloadSelectedBar");
+  const cancelSelectionBar = document.getElementById("cancelSelectionBar");
 
-    const paths = [
-      "galleries/client-a/1.png",
-      "galleries/client-a/2.png",
-      "galleries/client-a/3.png",
-      "galleries/client-a/4.png"
-    ];
+  // Change this folder name for each client gallery
+  const galleryFolder = "galleries/client-a";
 
-    let images = [];
-    let selected = new Set();
-    let selectionMode = false;
-    let index = 0;
-    let touchStartX = 0;
-    let touchEndX = 0;
+  let images = [];
+  let selected = new Set();
+  let selectionMode = false;
+  let index = 0;
+  let touchStartX = 0;
+  let touchEndX = 0;
 
-    function updateCounter() {
-      counter.textContent = `${index + 1} / ${images.length}`;
+  function updateCounter() {
+    counter.textContent = `${index + 1} / ${images.length}`;
+  }
+
+  function openLightbox(imageIndex) {
+    index = imageIndex;
+    lightboxImg.src = images[index];
+    updateCounter();
+    lightbox.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  function showNext() {
+    index = (index + 1) % images.length;
+    lightboxImg.src = images[index];
+    updateCounter();
+  }
+
+  function showPrev() {
+    index = (index - 1 + images.length) % images.length;
+    lightboxImg.src = images[index];
+    updateCounter();
+  }
+
+  function download(url) {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function downloadAllImages() {
+    images.forEach((url, i) => {
+      setTimeout(() => download(url), i * 320);
+    });
+  }
+
+  function updateSelectionUI() {
+    galleryGrid.classList.toggle("selecting", selectionMode);
+
+    const hasSelection = selected.size > 0;
+
+    selectBtn.classList.toggle("hidden", selectionMode);
+    downloadSelectedTop.classList.toggle("hidden", !selectionMode);
+    cancelSelectTop.classList.toggle("hidden", !selectionMode);
+
+    selectionBar.classList.toggle("active", hasSelection);
+    selectionInfo.textContent = `${selected.size} selected`;
+
+    if (!selectionMode && !hasSelection) {
+      selectionBar.classList.remove("active");
+    }
+  }
+
+  function enterSelectionMode() {
+    selectionMode = true;
+    updateSelectionUI();
+  }
+
+  function clearSelections() {
+    selected.clear();
+    document.querySelectorAll(".photo-card").forEach(card => card.classList.remove("selected"));
+  }
+
+  function exitSelectionMode() {
+    selectionMode = false;
+    clearSelections();
+    updateSelectionUI();
+  }
+
+  function toggleSelection(card, url) {
+    enterSelectionMode();
+    card.classList.toggle("selected");
+
+    if (selected.has(url)) {
+      selected.delete(url);
+    } else {
+      selected.add(url);
     }
 
-    function openLightbox(imageIndex) {
-      index = imageIndex;
-      lightboxImg.src = images[index];
-      updateCounter();
-      lightbox.classList.add("active");
-      document.body.style.overflow = "hidden";
+    if (selected.size === 0 && selectionMode) {
+      selectionBar.classList.remove("active");
     }
 
-    function closeLightbox() {
-      lightbox.classList.remove("active");
-      document.body.style.overflow = "";
+    updateSelectionUI();
+  }
+
+  function downloadSelected() {
+    const chosen = Array.from(selected);
+    if (!chosen.length) return;
+
+    chosen.forEach((url, i) => {
+      setTimeout(() => download(url), i * 320);
+    });
+  }
+
+  async function loadGallery() {
+    const folderRef = ref(storage, galleryFolder);
+    const result = await listAll(folderRef);
+
+    // Pull only files, then sort by file name so 1.png, 2.png, 3.png stay in order
+    const sortedItems = result.items.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" })
+    );
+
+    images = await Promise.all(sortedItems.map(item => getDownloadURL(item)));
+
+    if (!images.length) {
+      galleryGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#666;">No images found in this gallery yet.</p>';
+      counter.textContent = "0 / 0";
+      return;
     }
 
-    function showNext() {
-      index = (index + 1) % images.length;
-      lightboxImg.src = images[index];
-      updateCounter();
-    }
-
-    function showPrev() {
-      index = (index - 1 + images.length) % images.length;
-      lightboxImg.src = images[index];
-      updateCounter();
-    }
-
-    function download(url) {
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-
-    function downloadAllImages() {
-      images.forEach((url, i) => {
-        setTimeout(() => download(url), i * 320);
-      });
-    }
-
-    function updateSelectionUI() {
-      galleryGrid.classList.toggle("selecting", selectionMode);
-
-      const hasSelection = selected.size > 0;
-
-      selectBtn.classList.toggle("hidden", selectionMode);
-      downloadSelectedTop.classList.toggle("hidden", !selectionMode);
-      cancelSelectTop.classList.toggle("hidden", !selectionMode);
-
-      selectionBar.classList.toggle("active", hasSelection);
-      selectionInfo.textContent = `${selected.size} selected`;
-
-      if (!selectionMode && !hasSelection) {
-        selectionBar.classList.remove("active");
-      }
-    }
-
-    function enterSelectionMode() {
-      selectionMode = true;
-      updateSelectionUI();
-    }
-
-    function clearSelections() {
-      selected.clear();
-      document.querySelectorAll(".photo-card").forEach(card => card.classList.remove("selected"));
-    }
-
-    function exitSelectionMode() {
-      selectionMode = false;
-      clearSelections();
-      updateSelectionUI();
-    }
-
-    function toggleSelection(card, url) {
-      enterSelectionMode();
-      card.classList.toggle("selected");
-
-      if (selected.has(url)) {
-        selected.delete(url);
-      } else {
-        selected.add(url);
-      }
-
-      if (selected.size === 0 && selectionMode) {
-        selectionBar.classList.remove("active");
-      }
-
-      updateSelectionUI();
-    }
-
-    function downloadSelected() {
-      const chosen = Array.from(selected);
-      if (!chosen.length) return;
-
-      chosen.forEach((url, i) => {
-        setTimeout(() => download(url), i * 320);
-      });
-    }
-
-    for (let i = 0; i < paths.length; i++) {
-      const url = await getDownloadURL(ref(storage, paths[i]));
-      images.push(url);
-    }
-
-    if (images.length) {
-      heroBg.src = images[0];
-    }
+    heroBg.src = images[0];
+    counter.textContent = `1 / ${images.length}`;
 
     images.forEach((url, i) => {
       const card = document.createElement("div");
@@ -767,49 +774,49 @@
       card.appendChild(badge);
       galleryGrid.appendChild(card);
     });
+  }
 
-    document.getElementById("downloadAll").addEventListener("click", downloadAllImages);
-    document.getElementById("heroDownloadAll").addEventListener("click", downloadAllImages);
+  await loadGallery();
 
-    selectBtn.addEventListener("click", () => {
-      enterSelectionMode();
-    });
+  document.getElementById("downloadAll").addEventListener("click", downloadAllImages);
+  document.getElementById("heroDownloadAll").addEventListener("click", downloadAllImages);
 
-    downloadSelectedTop.addEventListener("click", downloadSelected);
-    cancelSelectTop.addEventListener("click", exitSelectionMode);
-    downloadSelectedBar.addEventListener("click", downloadSelected);
-    cancelSelectionBar.addEventListener("click", exitSelectionMode);
+  selectBtn.addEventListener("click", () => {
+    enterSelectionMode();
+  });
 
-    document.getElementById("close").addEventListener("click", closeLightbox);
-    document.getElementById("backToGallery").addEventListener("click", closeLightbox);
-    document.getElementById("next").addEventListener("click", showNext);
-    document.getElementById("prev").addEventListener("click", showPrev);
+  downloadSelectedTop.addEventListener("click", downloadSelected);
+  cancelSelectTop.addEventListener("click", exitSelectionMode);
+  downloadSelectedBar.addEventListener("click", downloadSelected);
+  cancelSelectionBar.addEventListener("click", exitSelectionMode);
 
-    lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
+  document.getElementById("close").addEventListener("click", closeLightbox);
+  document.getElementById("backToGallery").addEventListener("click", closeLightbox);
+  document.getElementById("next").addEventListener("click", showNext);
+  document.getElementById("prev").addEventListener("click", showPrev);
 
-    document.addEventListener("keydown", (e) => {
-      if (!lightbox.classList.contains("active")) return;
-      if (e.key === "Escape") closeLightbox();
-      if (e.key === "ArrowRight") showNext();
-      if (e.key === "ArrowLeft") showPrev();
-    });
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
 
-    lightbox.addEventListener("touchstart", (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
+  document.addEventListener("keydown", (e) => {
+    if (!lightbox.classList.contains("active")) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowRight") showNext();
+    if (e.key === "ArrowLeft") showPrev();
+  });
 
-    lightbox.addEventListener("touchend", (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchEndX - touchStartX;
+  lightbox.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
 
-      if (Math.abs(diff) < 40) return;
+  lightbox.addEventListener("touchend", (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchEndX - touchStartX;
 
-      if (diff < 0) showNext();
-      else showPrev();
-    }, { passive: true });
-  </script>
-</body>
-</html>
-</html>
+    if (Math.abs(diff) < 40) return;
+
+    if (diff < 0) showNext();
+    else showPrev();
+  }, { passive: true });
+</script>
