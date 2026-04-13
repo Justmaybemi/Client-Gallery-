@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Funmi's Studio Session | JustMaybeMi</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Manrope', sans-serif;
+      background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      color: white;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 72vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.62)),
+        linear-gradient(to right, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.12));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: min(92%, 1180px);
+      padding: 34px 0 64px;
+      text-align: center;
+    }
+
+    .brand-link {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.76);
+      padding: 4px;
+      background: rgba(255,255,255,0.14);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    }
+
+    .brand-name {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      line-height: 1;
+    }
+
+    .session-label {
+      margin: 8px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.86);
+    }
+
+    .session-title {
+      margin: 0 0 14px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.1rem, 5vw, 4rem);
+      line-height: 1.04;
+    }
+
+    .hero-text {
+      max-width: 720px;
+      margin: 0 auto 28px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.75;
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn, .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 13px 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .hero-btn:hover, .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.14);
+    }
+
+    .hero-btn.primary, .btn.primary {
+      background: white;
+      color: #111;
+    }
+
+    .hero-btn.secondary, .btn.secondary {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.42);
+      backdrop-filter: blur(6px);
+    }
+
+    .gallery-section {
+      width: min(92%, 1180px);
+      margin: -42px auto 80px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .gallery-shell {
+      background: rgba(255,255,255,0.98);
+      color: #111;
+      border-radius: 28px;
+      padding: 24px 22px 28px;
+      box-shadow:
+        0 40px 90px rgba(37, 9, 28, 0.22),
+        0 18px 40px rgba(0,0,0,0.14),
+        0 0 0 1px rgba(255,255,255,0.24) inset;
+      backdrop-filter: blur(6px);
+    }
+
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .gallery-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.65rem, 3vw, 2.4rem);
+      margin: 0 0 8px;
+    }
+
+    .gallery-header p {
+      margin: 0;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .btn.primary {
+      background: #111;
+      color: white;
+    }
+
+    .btn.secondary {
+      background: #f2f0ed;
+      color: #111;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .photo-card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      touch-action: manipulation;
+    }
+
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.28s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.02);
+    }
+
+    .photo-card.selected {
+      outline: 4px solid #7B024D;
+      box-shadow: 0 10px 26px rgba(123,2,77,0.18);
+    }
+
+    .selection-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.94);
+      color: #111;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+    }
+
+    .selecting .selection-badge {
+      display: flex;
+    }
+
+    .photo-card.selected .selection-badge {
+      background: #7B024D;
+      color: white;
+    }
+
+    .press-hint {
+      text-align: center;
+      margin-top: 16px;
+      color: #7b7b7b;
+      font-size: 0.92rem;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.96);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 18px;
+      touch-action: pan-y;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-inner {
+      position: relative;
+      width: min(100%, 1120px);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 82vh;
+      border-radius: 18px;
+      box-shadow: 0 22px 60px rgba(0,0,0,0.34);
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .lightbox-topbar {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 12px;
+    }
+
+    .back-btn,
+    .close-btn,
+    .arrow-btn {
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: white;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+    }
+
+    .back-btn,
+    .close-btn {
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .lightbox-counter {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .arrow-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52px;
+      height: 52px;
+      font-size: 1.5rem;
+    }
+
+    .prev-btn { left: 14px; }
+    .next-btn { right: 14px; }
+
+    .selection-bar {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 10000;
+      background: rgba(17,17,17,0.94);
+      color: white;
+      border-radius: 22px;
+      padding: 14px 14px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .selection-bar.active {
+      display: flex;
+    }
+
+    .selection-info {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .selection-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .selection-actions button {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .selection-download {
+      background: white;
+      color: #111;
+    }
+
+    .selection-cancel {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.22);
+    }
+
+    @media (max-width: 900px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .gallery-section {
+        margin-top: -26px;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .hero {
+        min-height: 62vh;
+      }
+
+      .hero-content {
+        padding: 28px 0 44px;
+      }
+
+      .hero-text {
+        font-size: 0.95rem;
+        line-height: 1.65;
+      }
+
+      .gallery-shell {
+        padding: 18px 14px 22px;
+        border-radius: 24px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .photo-card img {
+        aspect-ratio: 4 / 5;
+      }
+
+      .hero-actions,
+      .top-actions {
+        gap: 10px;
+      }
+
+      .hero-btn,
+      .btn {
+        width: 100%;
+      }
+
+      .arrow-btn {
+        width: 44px;
+        height: 44px;
+      }
+
+      .back-btn,
+      .close-btn {
+        padding: 10px 14px;
+        font-size: 0.88rem;
+      }
+
+      .selection-bar {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        border-radius: 18px;
+        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .selection-actions {
+        width: 100%;
+      }
+
+      .selection-actions button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <img id="heroBg" class="hero-bg" alt="Hero image">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <a href="index.html" class="brand-link">
+        <img src="logo.png" class="logo" alt="JustMaybeMi logo">
+        <h1 class="brand-name">JustMaybeMi</h1>
+      </a>
+
+      <p class="session-label">Private Client Gallery</p>
+      <h2 class="session-title">Sunday April 5th</h2>
+      <p class="hero-text">
+        A curated collection from your session. Tap to view full screen, swipe through images, or press and hold a photo to select it for download.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#gallery" class="hero-btn primary">View Gallery</a>
+        <button class="hero-btn secondary" id="heroDownloadAll" type="button">Download All</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section" id="gallery">
+    <div class="gallery-shell">
+      <div class="gallery-header">
+        <h3>Full Gallery</h3>
+        <p>Tap to expand. Press and hold to select.</p>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn primary" id="downloadAll">Download All</button>
+        <button class="btn secondary" id="selectBtn">Select</button>
+        <button class="btn primary hidden" id="downloadSelectedTop">Download Selected</button>
+        <button class="btn secondary hidden" id="cancelSelectTop">Cancel</button>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid"></div>
+      <div class="press-hint">Press and hold any image to select it.</div>
+    </div>
+  </section>
+
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-inner">
+      <div class="lightbox-topbar">
+        <button class="back-btn" id="backToGallery">← Back to Gallery</button>
+        <div class="lightbox-counter" id="counter">1 / 1</div>
+        <button class="close-btn" id="close">Close</button>
+      </div>
+
+      <button class="arrow-btn prev-btn" id="prev">‹</button>
+      <img id="lightboxImg" class="lightbox-image" alt="Full image">
+      <button class="arrow-btn next-btn" id="next">›</button>
+    </div>
+  </div>
+
+  <div class="selection-bar" id="selectionBar">
+    <div class="selection-info" id="selectionInfo">1 selected</div>
+    <div class="selection-actions">
+      <button class="selection-download" id="downloadSelectedBar">Download Selected</button>
+      <button class="selection-cancel" id="cancelSelectionBar">Cancel</button>
+    </div>
+  </div>
+
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
+    authDomain: "justmaybemi.firebaseapp.com",
+    projectId: "justmaybemi",
+    storageBucket: "justmaybemi.firebasestorage.app",
+    messagingSenderId: "1025934443334",
+    appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  await signInAnonymously(auth);
+
+  const storage = getStorage(app);
+  const galleryGrid = document.getElementById("galleryGrid");
+  const heroBg = document.getElementById("heroBg");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+  const counter = document.getElementById("counter");
+
+  const selectionBar = document.getElementById("selectionBar");
+  const selectionInfo = document.getElementById("selectionInfo");
+  const selectBtn = document.getElementById("selectBtn");
+  const downloadSelectedTop = document.getElementById("downloadSelectedTop");
+  const cancelSelectTop = document.getElementById("cancelSelectTop");
+  const downloadSelectedBar = document.getElementById("downloadSelectedBar");
+  const cancelSelectionBar = document.getElementById("cancelSelectionBar");
+
+  // Change this folder name for each client gallery
+  const galleryFolder = "galleries/client-c";
+
+  let images = [];
+  let selected = new Set();
+  let selectionMode = false;
+  let index = 0;
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  function updateCounter() {
+    counter.textContent = `${index + 1} / ${images.length}`;
+  }
+
+  function openLightbox(imageIndex) {
+    index = imageIndex;
+    lightboxImg.src = images[index];
+    updateCounter();
+    lightbox.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  function showNext() {
+    index = (index + 1) % images.length;
+    lightboxImg.src = images[index];
+    updateCounter();
+  }
+
+  function showPrev() {
+    index = (index - 1 + images.length) % images.length;
+    lightboxImg.src = images[index];
+    updateCounter();
+  }
+
+  function download(url) {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function downloadAllImages() {
+    images.forEach((url, i) => {
+      setTimeout(() => download(url), i * 320);
+    });
+  }
+
+  function updateSelectionUI() {
+    galleryGrid.classList.toggle("selecting", selectionMode);
+
+    const hasSelection = selected.size > 0;
+
+    selectBtn.classList.toggle("hidden", selectionMode);
+    downloadSelectedTop.classList.toggle("hidden", !selectionMode);
+    cancelSelectTop.classList.toggle("hidden", !selectionMode);
+
+    selectionBar.classList.toggle("active", hasSelection);
+    selectionInfo.textContent = `${selected.size} selected`;
+
+    if (!selectionMode && !hasSelection) {
+      selectionBar.classList.remove("active");
+    }
+  }
+
+  function enterSelectionMode() {
+    selectionMode = true;
+    updateSelectionUI();
+  }
+
+  function clearSelections() {
+    selected.clear();
+    document.querySelectorAll(".photo-card").forEach(card => card.classList.remove("selected"));
+  }
+
+  function exitSelectionMode() {
+    selectionMode = false;
+    clearSelections();
+    updateSelectionUI();
+  }
+
+  function toggleSelection(card, url) {
+    enterSelectionMode();
+    card.classList.toggle("selected");
+
+    if (selected.has(url)) {
+      selected.delete(url);
+    } else {
+      selected.add(url);
+    }
+
+    if (selected.size === 0 && selectionMode) {
+      selectionBar.classList.remove("active");
+    }
+
+    updateSelectionUI();
+  }
+
+  function downloadSelected() {
+    const chosen = Array.from(selected);
+    if (!chosen.length) return;
+
+    chosen.forEach((url, i) => {
+      setTimeout(() => download(url), i * 320);
+    });
+  }
+
+  async function loadGallery() {
+    const folderRef = ref(storage, galleryFolder);
+    const result = await listAll(folderRef);
+
+    // Pull only files, then sort by file name so 1.png, 2.png, 3.png stay in order
+    const sortedItems = result.items.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" })
+    );
+
+    images = await Promise.all(sortedItems.map(item => getDownloadURL(item)));
+
+    if (!images.length) {
+      galleryGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#666;">No images found in this gallery yet.</p>';
+      counter.textContent = "0 / 0";
+      return;
+    }
+
+    heroBg.src = images[0];
+    counter.textContent = `1 / ${images.length}`;
+
+    images.forEach((url, i) => {
+      const card = document.createElement("div");
+      card.className = "photo-card";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "Gallery image";
+
+      const badge = document.createElement("div");
+      badge.className = "selection-badge";
+      badge.textContent = "✓";
+
+      let pressTimer = null;
+      let longPressTriggered = false;
+
+      const startPress = () => {
+        longPressTriggered = false;
+        pressTimer = setTimeout(() => {
+          longPressTriggered = true;
+          toggleSelection(card, url);
+        }, 420);
+      };
+
+      const cancelPress = () => {
+        clearTimeout(pressTimer);
+      };
+
+      img.addEventListener("pointerdown", startPress);
+      img.addEventListener("pointerup", cancelPress);
+      img.addEventListener("pointerleave", cancelPress);
+      img.addEventListener("pointercancel", cancelPress);
+
+      img.addEventListener("click", () => {
+        if (longPressTriggered) {
+          longPressTriggered = false;
+          return;
+        }
+
+        if (selectionMode) {
+          toggleSelection(card, url);
+        } else {
+          openLightbox(i);
+        }
+      });
+
+      card.appendChild(img);
+      card.appendChild(badge);
+      galleryGrid.appendChild(card);
+    });
+  }
+
+  await loadGallery();
+
+  document.getElementById("downloadAll").addEventListener("click", downloadAllImages);
+  document.getElementById("heroDownloadAll").addEventListener("click", downloadAllImages);
+
+  selectBtn.addEventListener("click", () => {
+    enterSelectionMode();
+  });
+
+  downloadSelectedTop.addEventListener("click", downloadSelected);
+  cancelSelectTop.addEventListener("click", exitSelectionMode);
+  downloadSelectedBar.addEventListener("click", downloadSelected);
+  cancelSelectionBar.addEventListener("click", exitSelectionMode);
+
+  document.getElementById("close").addEventListener("click", closeLightbox);
+  document.getElementById("backToGallery").addEventListener("click", closeLightbox);
+  document.getElementById("next").addEventListener("click", showNext);
+  document.getElementById("prev").addEventListener("click", showPrev);
+
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!lightbox.classList.contains("active")) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowRight") showNext();
+    if (e.key === "ArrowLeft") showPrev();
+  });
+
+  lightbox.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  lightbox.addEventListener("touchend", (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchEndX - touchStartX;
+
+    if (Math.abs(diff) < 40) return;
+
+    if (diff < 0) showNext();
+    else showPrev();
+  }, { passive: true });
+</script>
