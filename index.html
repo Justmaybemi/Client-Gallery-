@@ -136,24 +136,48 @@
     </div>
   </div>
 
-  <script>
-    function openGallery() {
-      const code = document.getElementById("codeInput").value.trim().toUpperCase();
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
 
-      if (code === "CLIENTA") {
-        window.location.href = "client-a-k47m2x.html";
-      } else if (code === "CLIENTB") {
-        window.location.href = "client-b-r82n5q.html";
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
+    authDomain: "justmaybemi.firebaseapp.com",
+    projectId: "justmaybemi",
+    storageBucket: "justmaybemi.firebasestorage.app",
+    messagingSenderId: "1025934443334",
+    appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const functions = getFunctions(app);
+
+  async function openGallery() {
+    const code = document.getElementById("codeInput").value.trim().toUpperCase();
+
+    try {
+      const validateCode = httpsCallable(functions, "validateGalleryCode");
+
+      const result = await validateCode({ code });
+
+      if (result.data?.ok) {
+        window.location.href = result.data.redirectUrl;
       } else {
         alert("Invalid access code");
       }
-    }
 
-    document.getElementById("codeInput").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        openGallery();
-      }
-    });
-  </script>
-</body>
-</html>
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error validating code");
+    }
+  }
+
+  // make function callable from HTML button
+  window.openGallery = openGallery;
+
+  document.getElementById("codeInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      openGallery();
+    }
+  });
+</script>
