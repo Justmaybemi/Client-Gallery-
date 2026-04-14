@@ -154,28 +154,28 @@
 
   async function openGallery() {
     const code = document.getElementById("codeInput").value.trim().toUpperCase();
+    console.log("Entered code:", code);
 
     try {
       const validateCode = httpsCallable(functions, "validateGalleryCode");
-
       const result = await validateCode({ code });
 
-      if (result.data?.ok) {
+      console.log("Function result:", result.data);
+
+      if (result.data && result.data.ok === true && result.data.redirectUrl) {
         window.location.href = result.data.redirectUrl;
       } else {
         alert("Invalid access code");
       }
-
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error validating code");
+      console.error("Validation error:", error);
+      alert("Validation failed: " + (error.message || "Unknown error"));
     }
   }
 
-  // make function callable from HTML button
   window.openGallery = openGallery;
 
-  document.getElementById("codeInput").addEventListener("keydown", function(e) {
+  document.getElementById("codeInput").addEventListener("keydown", function (e) {
     if (e.key === "Enter") {
       openGallery();
     }
