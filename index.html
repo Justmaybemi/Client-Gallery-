@@ -150,26 +150,33 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const functions = getFunctions(app);
+
+  // MUST match your deployed function region
+  const functions = getFunctions(app, "northamerica-northeast2");
 
   async function openGallery() {
-    const code = document.getElementById("codeInput").value.trim().toUpperCase();
-    console.log("Entered code:", code);
+    const code = document.getElementById("codeInput").value.trim();
 
     try {
-      const validateCode = httpsCallable(functions, "validateGalleryCode");
-      const result = await validateCode({ code });
+      const unlockGallery = httpsCallable(functions, "unlockGallery");
+      const result = await unlockGallery({ code });
 
-      console.log("Function result:", result.data);
+      console.log("unlockGallery result:", result.data);
 
-      if (result.data && result.data.ok === true && result.data.redirectUrl) {
+      if (result.data?.redirectUrl) {
         window.location.href = result.data.redirectUrl;
-      } else {
+      } else if (result.data?.url) {
+        window.location.href = result.data.url;
+      } else if (result.data?.galleryUrl) {
+        window.location.href = result.data.galleryUrl;
+      } else if (result.data?.ok === false) {
         alert("Invalid access code");
+      } else {
+        alert("Code accepted, but no redirect URL was returned.");
       }
     } catch (error) {
-      console.error("Validation error:", error);
-      alert("Validation failed: " + (error.message || "Unknown error"));
+      console.error("Full unlockGallery error:", error);
+      alert("Error validating code: " + (error.message || "Unknown error"));
     }
   }
 
