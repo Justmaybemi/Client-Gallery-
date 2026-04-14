@@ -136,45 +136,22 @@
     </div>
   </div>
   
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
-    authDomain: "justmaybemi.firebaseapp.com",
-    projectId: "justmaybemi",
-    storageBucket: "justmaybemi.firebasestorage.app",
-    messagingSenderId: "1025934443334",
-    appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const functions = getFunctions(app, "northamerica-northeast2");
-
-  async function openGallery() {
+<script>
+  function openGallery() {
     const code = document.getElementById("codeInput").value.trim().toUpperCase();
 
-    try {
-      const unlockGallery = httpsCallable(functions, "unlockGallery");
-      const result = await unlockGallery({ code });
-
-      if (result.data?.images && Array.isArray(result.data.images)) {
-        sessionStorage.setItem("galleryImages", JSON.stringify(result.data.images));
-        sessionStorage.setItem("galleryTitle", result.data.sessionTitle || "Private Client Gallery");
-        window.location.href = "client-c.html";
-      } else {
-        alert("Invalid access code");
-      }
-    } catch (error) {
-      console.error("unlockGallery error:", error);
-      alert("Error validating code");
+    if (code === "CLIENTA") {
+      window.location.href = "client-a-k47m2x.html";
+    } else if (code === "CLIENTB") {
+      window.location.href = "client-b-r82n5q.html";
+    } else if (code === "CLIENTC") {
+      window.location.href = "client-c.html";
+    } else {
+      alert("Invalid access code");
     }
   }
 
-  window.openGallery = openGallery;
-
-  document.getElementById("codeInput").addEventListener("keydown", function (e) {
+  document.getElementById("codeInput").addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
       openGallery();
     }
