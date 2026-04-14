@@ -152,39 +152,27 @@
   const app = initializeApp(firebaseConfig);
 
   // MUST match your deployed function region
-  const functions = getFunctions(app, "northamerica-northeast2");
+  exports.unlockGallery = onCall(async (request) => {
+  const code = String(request.data.code || "").trim().toUpperCase();
 
-  async function openGallery() {
-    const code = document.getElementById("codeInput").value.trim();
+  const doc = await admin.firestore()
+    .collection("accessCodes")
+    .doc(code)
+    .get();
 
-    try {
-      const unlockGallery = httpsCallable(functions, "unlockGallery");
-      const result = await unlockGallery({ code });
-
-      console.log("unlockGallery result:", result.data);
-
-      if (result.data?.redirectUrl) {
-        window.location.href = result.data.redirectUrl;
-      } else if (result.data?.url) {
-        window.location.href = result.data.url;
-      } else if (result.data?.galleryUrl) {
-        window.location.href = result.data.galleryUrl;
-      } else if (result.data?.ok === false) {
-        alert("Invalid access code");
-      } else {
-        alert("Code accepted, but no redirect URL was returned.");
-      }
-    } catch (error) {
-      console.error("Full unlockGallery error:", error);
-      alert("Error validating code: " + (error.message || "Unknown error"));
-    }
+  if (!doc.exists) {
+    return { ok: false };
   }
 
-  window.openGallery = openGallery;
+  const data = doc.data();
 
-  document.getElementById("codeInput").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-      openGallery();
-    }
-  });
+  if (!data.active) {
+    return { ok: false };
+  }
+
+  return {
+    ok: true,
+    redirectUrl: `${data.folder}.html`
+  };
+});
 </script>
