@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JustMaybeMi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -17,7 +16,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Manrope', sans-serif;
+      font-family: Arial, sans-serif;
       background: linear-gradient(-45deg, #ffffff, #f4efe9, #7B024D, #ff8ac6);
       background-size: 400% 400%;
       animation: gradientShift 8s ease infinite;
@@ -40,7 +39,7 @@
       align-items: center;
     }
 
-    .logo {
+    img {
       width: 70px;
       height: 70px;
       object-fit: cover;
@@ -49,20 +48,16 @@
       border: 2px solid rgba(255,255,255,0.7);
       padding: 4px;
       background: rgba(255,255,255,0.12);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     }
 
     h1 {
       margin: 0 0 10px;
       font-size: clamp(2.4rem, 9vw, 3.2rem);
-      line-height: 1;
-      font-family: 'Playfair Display', serif;
     }
 
     p {
       margin: 0 0 20px;
       max-width: 320px;
-      line-height: 1.5;
       opacity: 0.95;
     }
 
@@ -73,7 +68,6 @@
       border-radius: 18px;
       padding: 12px;
       backdrop-filter: blur(8px);
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
     }
 
     input {
@@ -81,9 +75,7 @@
       padding: 14px;
       border-radius: 12px;
       border: none;
-      font-size: 1rem;
       margin-bottom: 10px;
-      outline: none;
     }
 
     button {
@@ -95,52 +87,33 @@
       color: black;
       font-weight: bold;
       cursor: pointer;
-      font-size: 1rem;
-    }
-
-    button:disabled {
-      opacity: 0.75;
-      cursor: not-allowed;
     }
 
     .error {
       display: none;
       margin-top: 12px;
-      font-size: 0.92rem;
       color: #ffe5e5;
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 18px 14px;
-      }
-
-      .form-wrap {
-        padding: 10px;
-        border-radius: 16px;
-      }
-
-      p {
-        font-size: 0.95rem;
-      }
     }
   </style>
 </head>
+
 <body>
   <div class="box">
-    <img src="logo.png" alt="JustMaybeMi logo" class="logo">
+    <img src="logo.png" alt="Logo">
+
     <h1>JustMaybeMi</h1>
+
     <p>Enter your access code to view your gallery</p>
 
     <div class="form-wrap">
-      <input
-        id="codeInput"
-        type="text"
+      <input 
+        id="codeInput" 
+        type="text" 
         placeholder="Enter access code"
         autocomplete="off"
-        spellcheck="false"
       >
-      <button id="openGalleryBtn" type="button">View Gallery</button>
+
+      <button id="openGalleryBtn">View Gallery</button>
     </div>
 
     <div id="errorMessage" class="error"></div>
@@ -161,6 +134,7 @@
 
     const app = initializeApp(firebaseConfig);
     const functions = getFunctions(app, "northamerica-northeast2");
+
     const unlockGallery = httpsCallable(functions, "unlockGallery");
 
     const input = document.getElementById("codeInput");
@@ -174,7 +148,7 @@
       errorMessage.textContent = "";
 
       if (!code) {
-        errorMessage.textContent = "Please enter an access code.";
+        errorMessage.textContent = "Please enter a code.";
         errorMessage.style.display = "block";
         return;
       }
@@ -184,11 +158,17 @@
 
       try {
         const result = await unlockGallery({ code });
-        sessionStorage.setItem("galleryData", JSON.stringify(result.data));
-        window.location.href = "gallery.html";
+
+        if (result.data) {
+          sessionStorage.setItem("galleryData", JSON.stringify(result.data));
+          window.location.href = "gallery.html";
+        } else {
+          throw new Error("No data returned");
+        }
+
       } catch (error) {
         console.error(error);
-        errorMessage.textContent = "Invalid or expired access code.";
+        errorMessage.textContent = "Invalid access code.";
         errorMessage.style.display = "block";
       } finally {
         button.disabled = false;
