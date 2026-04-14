@@ -159,22 +159,24 @@
       const unlockGallery = httpsCallable(functions, "unlockGallery");
       const result = await unlockGallery({ code });
 
-      console.log(result.data);
-
-      if (result.data?.redirectUrl) {
-        window.location.href = result.data.redirectUrl;
+      if (result.data?.images && Array.isArray(result.data.images)) {
+        sessionStorage.setItem("galleryImages", JSON.stringify(result.data.images));
+        sessionStorage.setItem("galleryTitle", result.data.sessionTitle || "Private Client Gallery");
+        window.location.href = "client-c.html";
       } else {
-        alert(`Invalid access code${result.data?.reason ? ` (${result.data.reason})` : ""}`);
+        alert("Invalid access code");
       }
     } catch (error) {
-      console.error(error);
+      console.error("unlockGallery error:", error);
       alert("Error validating code");
     }
   }
 
   window.openGallery = openGallery;
 
-  document.getElementById("codeInput").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") openGallery();
+  document.getElementById("codeInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      openGallery();
+    }
   });
 </script>
