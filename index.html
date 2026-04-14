@@ -37,6 +37,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
     img {
@@ -53,11 +54,13 @@
     h1 {
       margin: 0 0 10px;
       font-size: clamp(2.4rem, 9vw, 3.2rem);
+      line-height: 1;
     }
 
     p {
       margin: 0 0 20px;
       max-width: 320px;
+      line-height: 1.5;
       opacity: 0.95;
     }
 
@@ -68,6 +71,7 @@
       border-radius: 18px;
       padding: 12px;
       backdrop-filter: blur(8px);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
     }
 
     input {
@@ -75,7 +79,9 @@
       padding: 14px;
       border-radius: 12px;
       border: none;
+      font-size: 1rem;
       margin-bottom: 10px;
+      outline: none;
     }
 
     button {
@@ -87,16 +93,29 @@
       color: black;
       font-weight: bold;
       cursor: pointer;
+      font-size: 1rem;
     }
 
-    .error {
-      display: none;
-      margin-top: 12px;
-      color: #ffe5e5;
+    @media (max-width: 480px) {
+      body {
+        padding: 18px 14px;
+      }
+
+      .box {
+        max-width: 100%;
+      }
+
+      .form-wrap {
+        padding: 10px;
+        border-radius: 16px;
+      }
+
+      p {
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
-
 <body>
   <div class="box">
     <img src="logo.png" alt="Logo">
@@ -113,76 +132,49 @@
         autocomplete="off"
       >
 
-      <button id="openGalleryBtn">View Gallery</button>
+      <button onclick="openGallery()">View Gallery</button>
     </div>
-
-    <div id="errorMessage" class="error"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
-      authDomain: "justmaybemi.firebaseapp.com",
-      projectId: "justmaybemi",
-      storageBucket: "justmaybemi.firebasestorage.app",
-      messagingSenderId: "1025934443334",
-      appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
+    authDomain: "justmaybemi.firebaseapp.com",
+    projectId: "justmaybemi",
+    storageBucket: "justmaybemi.firebasestorage.app",
+    messagingSenderId: "1025934443334",
+    appId: "1:1025934443334:web:90c86cd5eccca8c70c1b47"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const functions = getFunctions(app, "northamerica-northeast2");
+  const app = initializeApp(firebaseConfig);
+  const functions = getFunctions(app, "northamerica-northeast2");
 
-    const unlockGallery = httpsCallable(functions, "unlockGallery");
+  async function openGallery() {
+    const code = document.getElementById("codeInput").value.trim().toUpperCase();
 
-    const input = document.getElementById("codeInput");
-    const button = document.getElementById("openGalleryBtn");
-    const errorMessage = document.getElementById("errorMessage");
+    try {
+      const unlockGallery = httpsCallable(functions, "unlockGallery");
+      const result = await unlockGallery({ code });
 
-    async function openGallery() {
-      const code = input.value.trim().toUpperCase();
-
-      errorMessage.style.display = "none";
-      errorMessage.textContent = "";
-
-      if (!code) {
-        errorMessage.textContent = "Please enter a code.";
-        errorMessage.style.display = "block";
-        return;
+      if (result.data?.redirectUrl) {
+        window.location.href = result.data.redirectUrl;
+      } else {
+        alert("Invalid access code");
       }
-
-      button.disabled = true;
-      button.textContent = "Opening...";
-
-      try {
-        const result = await unlockGallery({ code });
-
-        if (result.data) {
-          sessionStorage.setItem("galleryData", JSON.stringify(result.data));
-          window.location.href = "gallery.html";
-        } else {
-          throw new Error("No data returned");
-        }
-
-      } catch (error) {
-        console.error(error);
-        errorMessage.textContent = "Invalid access code.";
-        errorMessage.style.display = "block";
-      } finally {
-        button.disabled = false;
-        button.textContent = "View Gallery";
-      }
+    } catch (error) {
+      console.error("Full unlockGallery error:", error);
+      alert("Error validating code");
     }
+  }
 
-    button.addEventListener("click", openGallery);
+  window.openGallery = openGallery;
 
-    input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        openGallery();
-      }
-    });
-  </script>
-</body>
-</html>
+  document.getElementById("codeInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      openGallery();
+    }
+  });
+</script>
