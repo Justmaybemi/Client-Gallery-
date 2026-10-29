@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Funmi's Studio Session | JustMaybeMi</title>
 
+  <!-- SPEED FIX: connect to Firebase servers early -->
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -606,10 +610,24 @@
     counter.textContent = `${index + 1} / ${images.length}`;
   }
 
+  // SPEED FIX: quietly load the next and previous photos so swiping is instant
+  function preloadImage(i) {
+    if (!images.length) return;
+    const pre = new Image();
+    pre.decoding = "async";
+    pre.src = images[(i + images.length) % images.length];
+  }
+
+  function preloadNeighbors() {
+    preloadImage(index + 1);
+    preloadImage(index - 1);
+  }
+
   function openLightbox(imageIndex) {
     index = imageIndex;
     lightboxImg.src = images[index];
     updateCounter();
+    preloadNeighbors();
     lightbox.classList.add("active");
     document.body.style.overflow = "hidden";
   }
@@ -623,12 +641,14 @@
     index = (index + 1) % images.length;
     lightboxImg.src = images[index];
     updateCounter();
+    preloadNeighbors();
   }
 
   function showPrev() {
     index = (index - 1 + images.length) % images.length;
     lightboxImg.src = images[index];
     updateCounter();
+    preloadNeighbors();
   }
 
   function download(url) {
@@ -722,6 +742,9 @@
       return;
     }
 
+    // SPEED FIX: load the hero photo first, with top priority
+    heroBg.fetchPriority = "high";
+    heroBg.decoding = "async";
     heroBg.src = images[0];
     counter.textContent = `1 / ${images.length}`;
 
@@ -730,6 +753,10 @@
       card.className = "photo-card";
 
       const img = document.createElement("img");
+      // SPEED FIX: first photos load right away, the rest load as you scroll
+      img.loading = i < 6 ? "eager" : "lazy";
+      img.decoding = "async";
+      if (i < 6) img.fetchPriority = "high";
       img.src = url;
       img.alt = "Gallery image";
 
@@ -820,3 +847,5 @@
     else showPrev();
   }, { passive: true });
 </script>
+</body>
+</html>
