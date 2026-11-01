@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Funmi's Studio Session | JustMaybeMi</title>
+  <title>BILLBOARD FACE FASHION SHOW OCTOBER 25TH 2026 | JustMaybeMi</title>
+
+  <!-- SPEED FIX: connect to Firebase servers early -->
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
@@ -506,7 +510,7 @@
       </a>
 
       <p class="session-label">Private Client Gallery</p>
-      <h2 class="session-title">Funmi's Studio Session</h2>
+      <h2 class="session-title">THE BILLBOARD FACE FASHION SHOW</h2>
       <p class="hero-text">
         A curated collection from your session. Tap to view full screen, swipe through images, or press and hold a photo to select it for download.
       </p>
@@ -564,6 +568,13 @@
   import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
+  // PASSWORD CHECK: gallery stays empty until the right password is entered
+  const entered = prompt("Enter the gallery password:");
+  if (!entered || entered.trim().toLowerCase() !== "lauren") {
+    document.body.innerHTML = '<p style="color:#111;text-align:center;padding:60px 20px;font-family:sans-serif;">Incorrect password. Refresh the page to try again.</p>';
+    throw new Error("Incorrect password");
+  }
+
   const firebaseConfig = {
     apiKey: "AIzaSyAhajOJDE7aLZ-VPJq1wtCTZCZPrs-FDes",
     authDomain: "justmaybemi.firebaseapp.com",
@@ -606,10 +617,24 @@
     counter.textContent = `${index + 1} / ${images.length}`;
   }
 
+  // SPEED FIX: quietly load the next and previous photos so swiping is instant
+  function preloadImage(i) {
+    if (!images.length) return;
+    const pre = new Image();
+    pre.decoding = "async";
+    pre.src = images[(i + images.length) % images.length];
+  }
+
+  function preloadNeighbors() {
+    preloadImage(index + 1);
+    preloadImage(index - 1);
+  }
+
   function openLightbox(imageIndex) {
     index = imageIndex;
     lightboxImg.src = images[index];
     updateCounter();
+    preloadNeighbors();
     lightbox.classList.add("active");
     document.body.style.overflow = "hidden";
   }
@@ -623,12 +648,14 @@
     index = (index + 1) % images.length;
     lightboxImg.src = images[index];
     updateCounter();
+    preloadNeighbors();
   }
 
   function showPrev() {
     index = (index - 1 + images.length) % images.length;
     lightboxImg.src = images[index];
     updateCounter();
+    preloadNeighbors();
   }
 
   function download(url) {
@@ -722,6 +749,9 @@
       return;
     }
 
+    // SPEED FIX: load the hero photo first, with top priority
+    heroBg.fetchPriority = "high";
+    heroBg.decoding = "async";
     heroBg.src = images[0];
     counter.textContent = `1 / ${images.length}`;
 
@@ -730,6 +760,10 @@
       card.className = "photo-card";
 
       const img = document.createElement("img");
+      // SPEED FIX: first photos load right away, the rest load as you scroll
+      img.loading = i < 6 ? "eager" : "lazy";
+      img.decoding = "async";
+      if (i < 6) img.fetchPriority = "high";
       img.src = url;
       img.alt = "Gallery image";
 
@@ -820,3 +854,5 @@
     else showPrev();
   }, { passive: true });
 </script>
+</body>
+</html>
