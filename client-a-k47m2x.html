@@ -725,16 +725,37 @@
     });
   }
 
-  async function loadGallery() {
-    const folderRef = ref(storage, galleryFolder);
-    const result = await listAll(folderRef);
+ async function loadGallery() {
+    const sortFn = (a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
 
-    // Pull only files, then sort by file name so 1.png, 2.png, 3.png stay in order
-    const sortedItems = result.items.sort((a, b) =>
-      a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" })
-    );
+    let thumbs = [];
+    let mds = [];
 
-    images = await Promise.all(sortedItems.map(item => getDownloadURL(item)));
+    // NEW: look for resized copies made by admin.html
+    const thumbList = await listAll(ref(storage, `${galleryFolder}/thumb`));
+
+    if (thumbList.items.length) {
+      const sortedThumbs = thumbList.items.sort(sortFn);
+      const urls = await Promise.all(sortedThumbs.map(async (item) => {
+        const [t, m, f] = await Promise.all([
+          getDownloadURL(item),
+          getDownloadURL(ref(storage, `${galleryFolder}/md/${item.name}`)),
+          getDownloadURL(ref(storage, `${galleryFolder}/full/${item.name}`))
+        ]);
+        return { t, m, f };
+      }));
+      thumbs = urls.map(u => u.t);
+      mds = urls.map(u => u.m);
+      images = urls.map(u => u.f); // full size is used for lightbox + downloads
+    } else {
+      // OLD galleries (files directly in the folder) still work exactly as before
+      const result = await listAll(ref(storage, galleryFolder));
+      const sortedItems = result.items.sort(sortFn);
+      images = await Promise.all(sortedItems.map(item => getDownloadURL(item)));
+      thumbs = images;
+      mds = images;
+    }
 
     if (!images.length) {
       galleryGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#666;">No images found in this gallery yet.</p>';
@@ -745,7 +766,7 @@
     // SPEED FIX: load the hero photo first, with top priority
     heroBg.fetchPriority = "high";
     heroBg.decoding = "async";
-    heroBg.src = images[0];
+    heroBg.src = mds[0];
     counter.textContent = `1 / ${images.length}`;
 
     images.forEach((url, i) => {
@@ -757,7 +778,12 @@
       img.loading = i < 6 ? "eager" : "lazy";
       img.decoding = "async";
       if (i < 6) img.fetchPriority = "high";
-      img.src = url;
+      img.src = thumbs[i];
+      // NEW: responsive images, the browser picks thumb or medium by screen size
+      if (mds[i] !== thumbs[i]) {
+        img.srcset = `${thumbs[i]} 400w, ${mds[i]} 1200w`;
+        img.sizes = "(max-width: 580px) 50vw, (max-width: 900px) 50vw, 33vw";
+      }
       img.alt = "Gallery image";
 
       const badge = document.createElement("div");
@@ -802,50 +828,3 @@
       galleryGrid.appendChild(card);
     });
   }
-
-  await loadGallery();
-
-  document.getElementById("downloadAll").addEventListener("click", downloadAllImages);
-  document.getElementById("heroDownloadAll").addEventListener("click", downloadAllImages);
-
-  selectBtn.addEventListener("click", () => {
-    enterSelectionMode();
-  });
-
-  downloadSelectedTop.addEventListener("click", downloadSelected);
-  cancelSelectTop.addEventListener("click", exitSelectionMode);
-  downloadSelectedBar.addEventListener("click", downloadSelected);
-  cancelSelectionBar.addEventListener("click", exitSelectionMode);
-
-  document.getElementById("close").addEventListener("click", closeLightbox);
-  document.getElementById("backToGallery").addEventListener("click", closeLightbox);
-  document.getElementById("next").addEventListener("click", showNext);
-  document.getElementById("prev").addEventListener("click", showPrev);
-
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) closeLightbox();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (!lightbox.classList.contains("active")) return;
-    if (e.key === "Escape") closeLightbox();
-    if (e.key === "ArrowRight") showNext();
-    if (e.key === "ArrowLeft") showPrev();
-  });
-
-  lightbox.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, { passive: true });
-
-  lightbox.addEventListener("touchend", (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    const diff = touchEndX - touchStartX;
-
-    if (Math.abs(diff) < 40) return;
-
-    if (diff < 0) showNext();
-    else showPrev();
-  }, { passive: true });
-</script>
-</body>
-</html>
